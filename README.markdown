@@ -52,5 +52,3 @@ CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries
 
 - Fully GCD based and Thread-Safe<br/>
   _It runs entirely within its own GCD dispatch_queue, and is completely thread-safe. Further, the delegate methods are all invoked asynchronously onto a dispatch_queue of your choosing. This means parallel operation of your socket code, and your delegate/processing code._
-
-***
