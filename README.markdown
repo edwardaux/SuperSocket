@@ -1,3 +1,5 @@
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
 This project was forked from https://github.com/robbiehanson/CocoaAsyncSocket, and retains the original Public Domain License. The code has been wrapped into a framework, and is [Carthage ready](https://github.com/Carthage/Carthage).
 
 Any questions about the code can probably be answered on the [wiki for the original project](https://github.com/robbiehanson/CocoaAsyncSocket/wiki).
