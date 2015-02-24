@@ -1,8 +1,14 @@
+This project was forked from https://github.com/robbiehanson/CocoaAsyncSocket, and retains the original Public Domain License. The code has been wrapped into a framework, and is [Carthage ready](https://github.com/Carthage/Carthage).
+
+Any questions about the code can probably be answered on the [wiki for the original project](https://github.com/robbiehanson/CocoaAsyncSocket/wiki).
+
+----
+
 CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries for Mac and iOS. The classes are described below.
 
 ## TCP
 
-**GCDAsyncSocket** and **AsyncSocket** are TCP/IP socket networking libraries. Here are the key features available in both:
+**GCDAsyncSocket** is a TCP/IP socket networking libraries. Here are the key features available:
 
 - Native objective-c, fully self-contained in one class.<br/>
   _No need to muck around with sockets or streams. This class handles everything for you._
@@ -22,22 +28,15 @@ CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries
 - Support for TLS / SSL<br/>
   _Secure your socket with ease using just a single method call. Available for both client and server sockets._
 
-**GCDAsyncSocket** is built atop Grand Central Dispatch:
-
 - Fully GCD based and Thread-Safe<br/>
   _It runs entirely within its own GCD dispatch_queue, and is completely thread-safe. Further, the delegate methods are all invoked asynchronously onto a dispatch_queue of your choosing. This means parallel operation of your socket code, and your delegate/processing code._
 
 - The Latest Technology & Performance Optimizations<br/>
   _Internally the library takes advantage of technologies such as [kqueue's](http://en.wikipedia.org/wiki/Kqueue) to limit [system calls](http://en.wikipedia.org/wiki/System_call) and optimize buffer allocations. In other words, peak performance._
 
-**AsyncSocket** wraps CFSocket and CFStream:
-
-- Fully Run-loop based<br/>
-  _Use it on the main thread or a worker thread. It plugs into the NSRunLoop with configurable modes._
-
 ## UDP
 
-**GCDAsyncUdpSocket** and **AsyncUdpSocket** are UDP/IP socket networking libraries. Here are the key features available in both:
+**GCDAsyncUdpSocket** is a UDP/IP socket networking libraries. Here are the key features available:
 
 - Native objective-c, fully self-contained in one class.<br/>
   _No need to muck around with low-level sockets. This class handles everything for you._
@@ -51,20 +50,7 @@ CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries
 - Support for IPv4 and IPv6.<br/>
   _Automatically send/recv using IPv4 and/or IPv6. No more worrying about multiple sockets._
 
-**GCDAsyncUdpSocket** is built atop Grand Central Dispatch:
-
 - Fully GCD based and Thread-Safe<br/>
   _It runs entirely within its own GCD dispatch_queue, and is completely thread-safe. Further, the delegate methods are all invoked asynchronously onto a dispatch_queue of your choosing. This means parallel operation of your socket code, and your delegate/processing code._
 
-**AsyncUdpSocket** wraps CFSocket:
-
-- Fully Run-loop based<br/>
-  _Use it on the main thread or a worker thread. It plugs into the NSRunLoop with configurable modes._
-
 ***
-
-Can't find the answer to your question in any of the [wiki](https://github.com/robbiehanson/CocoaAsyncSocket/wiki) articles? Try the **[mailing list](http://groups.google.com/group/cocoaasyncsocket)**.
-<br/>
-<br/>
-Love the project? Wanna buy me a coffee? (or a beer :D) [![donation](http://www.paypal.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2M8C699FQ8AW2)
-
