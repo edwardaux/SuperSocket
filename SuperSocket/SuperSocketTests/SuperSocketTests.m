@@ -1,19 +1,18 @@
 //
-//  CocoaAsyncSocketTests.m
-//  CocoaAsyncSocketTests
+//  SuperSocketTests.m
+//  SuperSocketTests
 //
-//  Created by Joel Fischer on 2/24/15.
-//  Copyright (c) 2015 livio. All rights reserved.
+//  Created by Joel Fischer on 7/14/15.
+//  Copyright © 2015 livio. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
-@interface STCPSocketTests : XCTestCase
+@interface SuperSocketTests : XCTestCase
 
 @end
 
-@implementation STCPSocketTests
+@implementation SuperSocketTests
 
 - (void)setUp {
     [super setUp];
@@ -27,7 +26,7 @@
 
 - (void)testExample {
     // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+    // Use XCTAssert and related functions to verify your tests produce the correct results.
 }
 
 - (void)testPerformanceExample {

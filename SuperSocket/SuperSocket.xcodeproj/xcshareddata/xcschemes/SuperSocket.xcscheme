@@ -28,8 +28,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5D4833141A9D074D00252386"
-               BuildableName = "SuperSocket.xctest"
+               BlueprintIdentifier = "5D77F9A71B55992D0013F9A7"
+               BuildableName = "SuperSocketTests.xctest"
                BlueprintName = "SuperSocketTests"
                ReferencedContainer = "container:SuperSocket.xcodeproj">
             </BuildableReference>
@@ -46,8 +46,8 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5D4833141A9D074D00252386"
-               BuildableName = "SuperSocket.xctest"
+               BlueprintIdentifier = "5D77F9A71B55992D0013F9A7"
+               BuildableName = "SuperSocketTests.xctest"
                BlueprintName = "SuperSocketTests"
                ReferencedContainer = "container:SuperSocket.xcodeproj">
             </BuildableReference>

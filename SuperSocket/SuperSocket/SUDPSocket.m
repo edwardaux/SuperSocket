@@ -279,13 +279,13 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig)
 	int addressFamily;
 }
 
-- (id)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i;
+- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i;
 
 @end
 
 @implementation GCDAsyncUdpSendPacket
 
-- (id)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i
+- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i
 {
 	if ((self = [super init]))
 	{
@@ -315,13 +315,13 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig)
 	NSError *error;
 }
 
-- (id)init;
+- (instancetype)init;
 
 @end
 
 @implementation GCDAsyncUdpSpecialPacket
 
-- (id)init
+- (instancetype)init
 {
 	self = [super init];
 	return self;
@@ -336,28 +336,28 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig)
 
 @implementation SUDPSocket
 
-- (id)init
+- (instancetype)init
 {
 	LogTrace();
 	
 	return [self initWithDelegate:nil delegateQueue:NULL socketQueue:NULL];
 }
 
-- (id)initWithSocketQueue:(dispatch_queue_t)sq
+- (instancetype)initWithSocketQueue:(dispatch_queue_t)sq
 {
 	LogTrace();
 	
 	return [self initWithDelegate:nil delegateQueue:NULL socketQueue:sq];
 }
 
-- (id)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq
+- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq
 {
 	LogTrace();
 	
 	return [self initWithDelegate:aDelegate delegateQueue:dq socketQueue:NULL];
 }
 
-- (id)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq
+- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq
 {
 	LogTrace();
 	
