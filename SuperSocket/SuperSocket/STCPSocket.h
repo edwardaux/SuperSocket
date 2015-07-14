@@ -1,10 +1,10 @@
-//  
+//
 //  STCPSocket.h
-//  
+//
 //  This class is in the public domain.
 //  Originally created by Robbie Hanson in Q3 2010.
 //  Updated and maintained by Deusty LLC and the Apple development community.
-//  
+//
 //  https://github.com/robbiehanson/CocoaAsyncSocket
 //
 
@@ -30,9 +30,9 @@ extern NSString *const STCPSocketManuallyEvaluateTrust;
 #if TARGET_OS_IPHONE
 extern NSString *const STCPSocketUseCFStreamForTLS;
 #endif
-#define STCPSocketSSLPeerName     (NSString *)kCFStreamSSLPeerName
-#define STCPSocketSSLCertificates (NSString *)kCFStreamSSLCertificates
-#define STCPSocketSSLIsServer     (NSString *)kCFStreamSSLIsServer
+#define STCPSocketSSLPeerName (NSString *) kCFStreamSSLPeerName
+#define STCPSocketSSLCertificates (NSString *) kCFStreamSSLCertificates
+#define STCPSocketSSLIsServer (NSString *) kCFStreamSSLIsServer
 extern NSString *const STCPSocketSSLPeerID;
 extern NSString *const STCPSocketSSLProtocolVersionMin;
 extern NSString *const STCPSocketSSLProtocolVersionMax;
@@ -46,17 +46,16 @@ extern NSString *const STCPSocketSSLDiffieHellmanParameters;
 #define STCPSocketLoggingContext 65535
 
 
-typedef NS_ENUM(NSUInteger, STCPSocketError)
-{
-	STCPSocketErrorNone = 0,         // Never used
-	STCPSocketErrorBadConfig,        // Invalid configuration
-	STCPSocketErrorBadParam,         // Invalid parameter was passed
-	STCPSocketErrorConnectTimeout,   // A connect operation timed out
-	STCPSocketErrorReadTimeout,      // A read operation timed out
-	STCPSocketErrorWriteTimeout,     // A write operation timed out
-	STCPSocketErrorReadMaxedOut,     // Reached set maxLength without completing
-	STCPSocketErrorClosed,           // The remote peer closed the connection
-	STCPSocketErrorOther,            // Description provided in userInfo
+typedef NS_ENUM(NSUInteger, STCPSocketError) {
+    STCPSocketErrorNone = 0,       // Never used
+    STCPSocketErrorBadConfig,      // Invalid configuration
+    STCPSocketErrorBadParam,       // Invalid parameter was passed
+    STCPSocketErrorConnectTimeout, // A connect operation timed out
+    STCPSocketErrorReadTimeout,    // A read operation timed out
+    STCPSocketErrorWriteTimeout,   // A write operation timed out
+    STCPSocketErrorReadMaxedOut,   // Reached set maxLength without completing
+    STCPSocketErrorClosed,         // The remote peer closed the connection
+    STCPSocketErrorOther,          // Description provided in userInfo
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -336,10 +335,10 @@ typedef NS_ENUM(NSUInteger, STCPSocketError)
  * The host will be an IP address.
 **/
 @property (atomic, readonly) NSString *connectedHost;
-@property (atomic, readonly) uint16_t  connectedPort;
+@property (atomic, readonly) uint16_t connectedPort;
 
 @property (atomic, readonly) NSString *localHost;
-@property (atomic, readonly) uint16_t  localPort;
+@property (atomic, readonly) uint16_t localPort;
 
 /**
  * Returns the local or remote address to which this socket is connected,
@@ -370,15 +369,15 @@ typedef NS_ENUM(NSUInteger, STCPSocketError)
 #pragma mark Reading
 
 // The readData and writeData methods won't block (they are asynchronous).
-// 
+//
 // When a read is complete the socket:didReadData:withTag: delegate method is dispatched on the delegateQueue.
 // When a write is complete the socket:didWriteDataWithTag: delegate method is dispatched on the delegateQueue.
-// 
+//
 // You may optionally set a timeout for any read/write operation. (To not timeout, use a negative time interval.)
 // If a read/write opertion times out, the corresponding "socket:shouldTimeout..." delegate method
 // is called to optionally allow you to extend the timeout.
 // Upon a timeout, the "socket:didDisconnectWithError:" method is called
-// 
+//
 // The tag is for your convenience.
 // You can use it as an array index, step number, state id, pointer, etc.
 
@@ -406,9 +405,9 @@ typedef NS_ENUM(NSUInteger, STCPSocketError)
  * the method [NSData dataWithBytesNoCopy:length:freeWhenDone:NO].
 **/
 - (void)readDataWithTimeout:(NSTimeInterval)timeout
-					 buffer:(NSMutableData *)buffer
-			   bufferOffset:(NSUInteger)offset
-						tag:(long)tag;
+                     buffer:(NSMutableData *)buffer
+               bufferOffset:(NSUInteger)offset
+                        tag:(long)tag;
 
 /**
  * Reads the first available bytes that become available on the socket.
@@ -1009,10 +1008,10 @@ typedef NS_ENUM(NSUInteger, STCPSocketError)
 /**
  * A few common line separators, for use with the readDataToData:... methods.
 **/
-+ (NSData *)CRLFData;   // 0x0D0A
-+ (NSData *)CRData;     // 0x0D
-+ (NSData *)LFData;     // 0x0A
-+ (NSData *)ZeroData;   // 0x00
++ (NSData *)CRLFData; // 0x0D0A
++ (NSData *)CRData;   // 0x0D
++ (NSData *)LFData;   // 0x0A
++ (NSData *)ZeroData; // 0x00
 
 @end
 
@@ -1097,8 +1096,8 @@ typedef NS_ENUM(NSUInteger, STCPSocketError)
  * Note that this method may be called multiple times for a single read if you return positive numbers.
 **/
 - (NSTimeInterval)socket:(STCPSocket *)sock shouldTimeoutReadWithTag:(long)tag
-                                                                 elapsed:(NSTimeInterval)elapsed
-                                                               bytesDone:(NSUInteger)length;
+                 elapsed:(NSTimeInterval)elapsed
+               bytesDone:(NSUInteger)length;
 
 /**
  * Called if a write operation has reached its timeout without completing.
@@ -1112,8 +1111,8 @@ typedef NS_ENUM(NSUInteger, STCPSocketError)
  * Note that this method may be called multiple times for a single write if you return positive numbers.
 **/
 - (NSTimeInterval)socket:(STCPSocket *)sock shouldTimeoutWriteWithTag:(long)tag
-                                                                  elapsed:(NSTimeInterval)elapsed
-                                                                bytesDone:(NSUInteger)length;
+                      elapsed:(NSTimeInterval)elapsed
+                    bytesDone:(NSUInteger)length;
 
 /**
  * Conditionally called if the read stream closes, but the write stream may still be writeable.
@@ -1173,6 +1172,6 @@ typedef NS_ENUM(NSUInteger, STCPSocketError)
  * It is safe to invoke the completionHandler block even if the socket has been closed.
 **/
 - (void)socket:(STCPSocket *)sock didReceiveTrust:(SecTrustRef)trust
-                                    completionHandler:(void (^)(BOOL shouldTrustPeer))completionHandler;
+    completionHandler:(void (^)(BOOL shouldTrustPeer))completionHandler;
 
 @end

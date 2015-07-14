@@ -1,10 +1,10 @@
-//  
+//
 //  GCDAsyncUdpSocket
-//  
+//
 //  This class is in the public domain.
 //  Originally created by Robbie Hanson of Deusty LLC.
 //  Updated and maintained by Deusty LLC and the Apple development community.
-//  
+//
 //  https://github.com/robbiehanson/CocoaAsyncSocket
 //
 
@@ -20,12 +20,12 @@ extern NSString *const SUDPSocketQueueName;
 extern NSString *const SUDPSocketThreadName;
 
 typedef NS_ENUM(NSInteger, SUDPSocketError) {
-	SUDPSocketErrorNone = 0,        // Never used
-	SUDPSocketErrorBadConfig,       // Invalid configuration
-	SUDPSocketErrorBadParam,        // Invalid parameter was passed
-	SUDPSocketErrorSendTimeout,     // A send operation timed out
-	SUDPSocketErrorClosed,          // The socket was closed
-	SUDPSocketErrorOther,           // Description provided in userInfo
+    SUDPSocketErrorNone = 0,    // Never used
+    SUDPSocketErrorBadConfig,   // Invalid configuration
+    SUDPSocketErrorBadParam,    // Invalid parameter was passed
+    SUDPSocketErrorSendTimeout, // A send operation timed out
+    SUDPSocketErrorClosed,      // The socket was closed
+    SUDPSocketErrorOther,       // Description provided in userInfo
 };
 
 /**
@@ -982,8 +982,8 @@ typedef BOOL (^SUDPSocketSendFilterBlock)(NSData *data, NSData *address, long ta
  * Called when the socket has received the requested datagram.
 **/
 - (void)udpSocket:(SUDPSocket *)sock didReceiveData:(NSData *)data
-                                             fromAddress:(NSData *)address
-                                       withFilterContext:(id)filterContext;
+      fromAddress:(NSData *)address
+withFilterContext:(id)filterContext;
 
 /**
  * Called when the socket is closed.
@@ -991,4 +991,3 @@ typedef BOOL (^SUDPSocketSendFilterBlock)(NSData *data, NSData *address, long ta
 - (void)udpSocketDidClose:(SUDPSocket *)sock withError:(NSError *)error;
 
 @end
-
