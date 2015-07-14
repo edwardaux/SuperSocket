@@ -1,18 +1,16 @@
-# CocoaAsyncSocket
+# SuperSocket
 
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
-This project was forked from https://github.com/robbiehanson/CocoaAsyncSocket, and retains the original Public Domain License. The code has been wrapped into a framework, and is [Carthage ready](https://github.com/Carthage/Carthage).
+This project was forked from [CocoaAsyncSocket](https://github.com/robbiehanson/CocoaAsyncSocket), and retains the original Public Domain License. The code has been wrapped into a framework, and is [Carthage ready](https://github.com/Carthage/Carthage). Cocoapods should be coming soon.
 
 Any questions about the code can probably be answered on the [wiki for the original project](https://github.com/robbiehanson/CocoaAsyncSocket/wiki).
 
-----
-
-CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries for Mac and iOS. The classes are described below.
+SuperSocket provides easy-to-use and powerful asynchronous socket libraries for Mac and iOS. The classes are described below.
 
 ## TCP
 
-**GCDAsyncSocket** is a TCP/IP socket networking libraries. Here are the key features available:
+**STCPSocket** is a TCP/IP socket networking libraries. Here are the key features available:
 
 - Native objective-c, fully self-contained in one class.<br/>
   _No need to muck around with sockets or streams. This class handles everything for you._
@@ -40,7 +38,7 @@ CocoaAsyncSocket provides easy-to-use and powerful asynchronous socket libraries
 
 ## UDP
 
-**GCDAsyncUdpSocket** is a UDP/IP socket networking libraries. Here are the key features available:
+**SUDPSocket** is a UDP/IP socket networking libraries. Here are the key features available:
 
 - Native objective-c, fully self-contained in one class.<br/>
   _No need to muck around with low-level sockets. This class handles everything for you._
