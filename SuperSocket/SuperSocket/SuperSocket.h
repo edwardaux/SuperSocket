@@ -1,19 +1,19 @@
 //
-//  GCDAsyncSocket.h
+//  SuperSocket.h
 //
 //  This class is in the public domain.
 //  Originally created by Joel Fischer, Livio.
 //
-//  https://github.com/robbiehanson/CocoaAsyncSocket
+//  Based on https://github.com/robbiehanson/CocoaAsyncSocket
 //
 
 #import <UIKit/UIKit.h>
 
 //! Project version number for CocoaAsyncSocket.
-FOUNDATION_EXPORT double CocoaAsyncSocketVersionNumber;
+FOUNDATION_EXPORT double SuperSocketVersionNumber;
 
 //! Project version string for CocoaAsyncSocket.
-FOUNDATION_EXPORT const unsigned char CocoaAsyncSocketVersionString[];
+FOUNDATION_EXPORT const unsigned char SuperSocketVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <CocoaAsyncSocket/PublicHeader.h>
 

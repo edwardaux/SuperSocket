@@ -13,22 +13,20 @@
 #import <TargetConditionals.h>
 #import <Availability.h>
 
-extern NSString *const GCDAsyncUdpSocketException;
-extern NSString *const GCDAsyncUdpSocketErrorDomain;
+extern NSString *const SUDPSocketException;
+extern NSString *const SUDPSocketErrorDomain;
 
-extern NSString *const GCDAsyncUdpSocketQueueName;
-extern NSString *const GCDAsyncUdpSocketThreadName;
+extern NSString *const SUDPSocketQueueName;
+extern NSString *const SUDPSocketThreadName;
 
-enum GCDAsyncUdpSocketError
-{
-	GCDAsyncUdpSocketNoError = 0,          // Never used
-	GCDAsyncUdpSocketBadConfigError,       // Invalid configuration
-	GCDAsyncUdpSocketBadParamError,        // Invalid parameter was passed
-	GCDAsyncUdpSocketSendTimeoutError,     // A send operation timed out
-	GCDAsyncUdpSocketClosedError,          // The socket was closed
-	GCDAsyncUdpSocketOtherError,           // Description provided in userInfo
+typedef NS_ENUM(NSInteger, SUDPSocketError) {
+	SUDPSocketErrorNone = 0,        // Never used
+	SUDPSocketErrorBadConfig,       // Invalid configuration
+	SUDPSocketErrorBadParam,        // Invalid parameter was passed
+	SUDPSocketErrorSendTimeout,     // A send operation timed out
+	SUDPSocketErrorClosed,          // The socket was closed
+	SUDPSocketErrorOther,           // Description provided in userInfo
 };
-typedef enum GCDAsyncUdpSocketError GCDAsyncUdpSocketError;
 
 /**
  * You may optionally set a receive filter for the socket.
@@ -78,7 +76,7 @@ typedef enum GCDAsyncUdpSocketError GCDAsyncUdpSocketError;
  * [udpSocket setReceiveFilter:filter withQueue:myParsingQueue];
  * 
 **/
-typedef BOOL (^GCDAsyncUdpSocketReceiveFilterBlock)(NSData *data, NSData *address, id *context);
+typedef BOOL (^SUDPSocketReceiveFilterBlock)(NSData *data, NSData *address, id *context);
 
 /**
  * You may optionally set a send filter for the socket.
@@ -106,10 +104,10 @@ typedef BOOL (^GCDAsyncUdpSocketReceiveFilterBlock)(NSData *data, NSData *addres
  * Regardless of the return value, the delegate will be informed that the packet was successfully sent.
  *
 **/
-typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, long tag);
+typedef BOOL (^SUDPSocketSendFilterBlock)(NSData *data, NSData *address, long tag);
 
 
-@interface GCDAsyncUdpSocket : NSObject
+@interface SUDPSocket : NSObject
 
 /**
  * GCDAsyncUdpSocket uses the standard delegate paradigm,
@@ -597,7 +595,7 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
  * Note: This method invokes setSendFilter:withQueue:isAsynchronous: (documented below),
  *       passing YES for the isAsynchronous parameter.
 **/
-- (void)setSendFilter:(GCDAsyncUdpSocketSendFilterBlock)filterBlock withQueue:(dispatch_queue_t)filterQueue;
+- (void)setSendFilter:(SUDPSocketSendFilterBlock)filterBlock withQueue:(dispatch_queue_t)filterQueue;
 
 /**
  * The receive filter can be run via dispatch_async or dispatch_sync.
@@ -612,7 +610,7 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
  * then you cannot perform any tasks which may invoke dispatch_sync on the socket queue.
  * For example, you can't query properties on the socket.
 **/
-- (void)setSendFilter:(GCDAsyncUdpSocketSendFilterBlock)filterBlock
+- (void)setSendFilter:(SUDPSocketSendFilterBlock)filterBlock
             withQueue:(dispatch_queue_t)filterQueue
        isAsynchronous:(BOOL)isAsynchronous;
 
@@ -729,7 +727,7 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
  * Note: This method invokes setReceiveFilter:withQueue:isAsynchronous: (documented below),
  *       passing YES for the isAsynchronous parameter.
 **/
-- (void)setReceiveFilter:(GCDAsyncUdpSocketReceiveFilterBlock)filterBlock withQueue:(dispatch_queue_t)filterQueue;
+- (void)setReceiveFilter:(SUDPSocketReceiveFilterBlock)filterBlock withQueue:(dispatch_queue_t)filterQueue;
 
 /**
  * The receive filter can be run via dispatch_async or dispatch_sync.
@@ -744,7 +742,7 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
  * then you cannot perform any tasks which may invoke dispatch_sync on the socket queue.
  * For example, you can't query properties on the socket.
 **/
-- (void)setReceiveFilter:(GCDAsyncUdpSocketReceiveFilterBlock)filterBlock
+- (void)setReceiveFilter:(SUDPSocketReceiveFilterBlock)filterBlock
                withQueue:(dispatch_queue_t)filterQueue
           isAsynchronous:(BOOL)isAsynchronous;
 
@@ -957,7 +955,7 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
  * 
  * This method is called if one of the connect methods are invoked, and the connection is successful.
 **/
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address;
+- (void)udpSocket:(SUDPSocket *)sock didConnectToAddress:(NSData *)address;
 
 /**
  * By design, UDP is a connectionless protocol, and connecting is not needed.
@@ -967,30 +965,30 @@ typedef BOOL (^GCDAsyncUdpSocketSendFilterBlock)(NSData *data, NSData *address, 
  * This method is called if one of the connect methods are invoked, and the connection fails.
  * This may happen, for example, if a domain name is given for the host and the domain name is unable to be resolved.
 **/
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError *)error;
+- (void)udpSocket:(SUDPSocket *)sock didNotConnect:(NSError *)error;
 
 /**
  * Called when the datagram with the given tag has been sent.
 **/
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag;
+- (void)udpSocket:(SUDPSocket *)sock didSendDataWithTag:(long)tag;
 
 /**
  * Called if an error occurs while trying to send a datagram.
  * This could be due to a timeout, or something more serious such as the data being too large to fit in a sigle packet.
 **/
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error;
+- (void)udpSocket:(SUDPSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError *)error;
 
 /**
  * Called when the socket has received the requested datagram.
 **/
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
+- (void)udpSocket:(SUDPSocket *)sock didReceiveData:(NSData *)data
                                              fromAddress:(NSData *)address
                                        withFilterContext:(id)filterContext;
 
 /**
  * Called when the socket is closed.
 **/
-- (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError *)error;
+- (void)udpSocketDidClose:(SUDPSocket *)sock withError:(NSError *)error;
 
 @end
 

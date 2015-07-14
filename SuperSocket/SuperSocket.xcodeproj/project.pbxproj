@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5D4833101A9D074D00252386 /* CocoaAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D48330F1A9D074D00252386 /* CocoaAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5D4833161A9D074D00252386 /* CocoaAsyncSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D48330A1A9D074D00252386 /* CocoaAsyncSocket.framework */; };
-		5D48331D1A9D074D00252386 /* CocoaAsyncSocketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D48331C1A9D074D00252386 /* CocoaAsyncSocketTests.m */; };
-		5D48332A1A9D07A700252386 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D4833261A9D07A700252386 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5D48332B1A9D07A700252386 /* GCDAsyncSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4833271A9D07A700252386 /* GCDAsyncSocket.m */; };
-		5D48332C1A9D07A700252386 /* GCDAsyncUdpSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D4833281A9D07A700252386 /* GCDAsyncUdpSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5D48332D1A9D07A700252386 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4833291A9D07A700252386 /* GCDAsyncUdpSocket.m */; };
+		5D4833161A9D074D00252386 /* SuperSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D48330A1A9D074D00252386 /* SuperSocket.framework */; };
+		5D77F99A1B5597510013F9A7 /* STCPSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9951B5597510013F9A7 /* STCPSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5D77F99B1B5597510013F9A7 /* STCPSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9961B5597510013F9A7 /* STCPSocket.m */; };
+		5D77F99C1B5597510013F9A7 /* SUDPSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9971B5597510013F9A7 /* SUDPSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5D77F99D1B5597510013F9A7 /* SUDPSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9981B5597510013F9A7 /* SUDPSocket.m */; };
+		5D77F99E1B5597510013F9A7 /* SuperSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9991B5597510013F9A7 /* SuperSocket.h */; };
+		5D77F9A01B55976D0013F9A7 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D77F99F1B55976D0013F9A7 /* Info.plist */; };
+		5D77F9A21B5597770013F9A7 /* STCPSocketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9A11B5597770013F9A7 /* STCPSocketTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,16 +28,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5D48330A1A9D074D00252386 /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CocoaAsyncSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5D48330E1A9D074D00252386 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D48330F1A9D074D00252386 /* CocoaAsyncSocket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CocoaAsyncSocket.h; sourceTree = "<group>"; };
-		5D4833151A9D074D00252386 /* CocoaAsyncSocketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CocoaAsyncSocketTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D48330A1A9D074D00252386 /* SuperSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SuperSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D4833151A9D074D00252386 /* SuperSocket.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SuperSocket.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D48331B1A9D074D00252386 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5D48331C1A9D074D00252386 /* CocoaAsyncSocketTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CocoaAsyncSocketTests.m; sourceTree = "<group>"; };
-		5D4833261A9D07A700252386 /* GCDAsyncSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncSocket.h; sourceTree = "<group>"; };
-		5D4833271A9D07A700252386 /* GCDAsyncSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncSocket.m; sourceTree = "<group>"; };
-		5D4833281A9D07A700252386 /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
-		5D4833291A9D07A700252386 /* GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
+		5D77F9951B5597510013F9A7 /* STCPSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STCPSocket.h; path = SuperSocket/STCPSocket.h; sourceTree = SOURCE_ROOT; };
+		5D77F9961B5597510013F9A7 /* STCPSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STCPSocket.m; path = SuperSocket/STCPSocket.m; sourceTree = SOURCE_ROOT; };
+		5D77F9971B5597510013F9A7 /* SUDPSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUDPSocket.h; path = SuperSocket/SUDPSocket.h; sourceTree = SOURCE_ROOT; };
+		5D77F9981B5597510013F9A7 /* SUDPSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUDPSocket.m; path = SuperSocket/SUDPSocket.m; sourceTree = SOURCE_ROOT; };
+		5D77F9991B5597510013F9A7 /* SuperSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SuperSocket.h; path = SuperSocket/SuperSocket.h; sourceTree = SOURCE_ROOT; };
+		5D77F99F1B55976D0013F9A7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SuperSocket/Info.plist; sourceTree = SOURCE_ROOT; };
+		5D77F9A11B5597770013F9A7 /* STCPSocketTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STCPSocketTests.m; path = SuperSocketTests/STCPSocketTests.m; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D4833161A9D074D00252386 /* CocoaAsyncSocket.framework in Frameworks */,
+				5D4833161A9D074D00252386 /* SuperSocket.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,8 +62,8 @@
 		5D4833001A9D074D00252386 = {
 			isa = PBXGroup;
 			children = (
-				5D48330C1A9D074D00252386 /* CocoaAsyncSocket */,
-				5D4833191A9D074D00252386 /* CocoaAsyncSocketTests */,
+				5D48330C1A9D074D00252386 /* SuperSocket */,
+				5D4833191A9D074D00252386 /* SuperSocketTests */,
 				5D48330B1A9D074D00252386 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -70,39 +71,41 @@
 		5D48330B1A9D074D00252386 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5D48330A1A9D074D00252386 /* CocoaAsyncSocket.framework */,
-				5D4833151A9D074D00252386 /* CocoaAsyncSocketTests.xctest */,
+				5D48330A1A9D074D00252386 /* SuperSocket.framework */,
+				5D4833151A9D074D00252386 /* SuperSocket.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5D48330C1A9D074D00252386 /* CocoaAsyncSocket */ = {
+		5D48330C1A9D074D00252386 /* SuperSocket */ = {
 			isa = PBXGroup;
 			children = (
-				5D48330F1A9D074D00252386 /* CocoaAsyncSocket.h */,
-				5D4833261A9D07A700252386 /* GCDAsyncSocket.h */,
-				5D4833271A9D07A700252386 /* GCDAsyncSocket.m */,
-				5D4833281A9D07A700252386 /* GCDAsyncUdpSocket.h */,
-				5D4833291A9D07A700252386 /* GCDAsyncUdpSocket.m */,
+				5D77F9951B5597510013F9A7 /* STCPSocket.h */,
+				5D77F9961B5597510013F9A7 /* STCPSocket.m */,
+				5D77F9971B5597510013F9A7 /* SUDPSocket.h */,
+				5D77F9981B5597510013F9A7 /* SUDPSocket.m */,
+				5D77F9991B5597510013F9A7 /* SuperSocket.h */,
 				5D48330D1A9D074D00252386 /* Supporting Files */,
 			);
+			name = SuperSocket;
 			path = CocoaAsyncSocket;
 			sourceTree = "<group>";
 		};
 		5D48330D1A9D074D00252386 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				5D48330E1A9D074D00252386 /* Info.plist */,
+				5D77F99F1B55976D0013F9A7 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		5D4833191A9D074D00252386 /* CocoaAsyncSocketTests */ = {
+		5D4833191A9D074D00252386 /* SuperSocketTests */ = {
 			isa = PBXGroup;
 			children = (
-				5D48331C1A9D074D00252386 /* CocoaAsyncSocketTests.m */,
+				5D77F9A11B5597770013F9A7 /* STCPSocketTests.m */,
 				5D48331A1A9D074D00252386 /* Supporting Files */,
 			);
+			name = SuperSocketTests;
 			path = CocoaAsyncSocketTests;
 			sourceTree = "<group>";
 		};
@@ -121,18 +124,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D4833101A9D074D00252386 /* CocoaAsyncSocket.h in Headers */,
-				5D48332C1A9D07A700252386 /* GCDAsyncUdpSocket.h in Headers */,
-				5D48332A1A9D07A700252386 /* GCDAsyncSocket.h in Headers */,
+				5D77F99E1B5597510013F9A7 /* SuperSocket.h in Headers */,
+				5D77F99A1B5597510013F9A7 /* STCPSocket.h in Headers */,
+				5D77F99C1B5597510013F9A7 /* SUDPSocket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		5D4833091A9D074D00252386 /* CocoaAsyncSocket */ = {
+		5D4833091A9D074D00252386 /* SuperSocket */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "CocoaAsyncSocket" */;
+			buildConfigurationList = 5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocket" */;
 			buildPhases = (
 				5D4833051A9D074D00252386 /* Sources */,
 				5D4833061A9D074D00252386 /* Frameworks */,
@@ -143,14 +146,14 @@
 			);
 			dependencies = (
 			);
-			name = CocoaAsyncSocket;
+			name = SuperSocket;
 			productName = CocoaAsyncSocket;
-			productReference = 5D48330A1A9D074D00252386 /* CocoaAsyncSocket.framework */;
+			productReference = 5D48330A1A9D074D00252386 /* SuperSocket.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		5D4833141A9D074D00252386 /* CocoaAsyncSocketTests */ = {
+		5D4833141A9D074D00252386 /* SuperSocketTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D4833231A9D074D00252386 /* Build configuration list for PBXNativeTarget "CocoaAsyncSocketTests" */;
+			buildConfigurationList = 5D4833231A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocketTests" */;
 			buildPhases = (
 				5D4833111A9D074D00252386 /* Sources */,
 				5D4833121A9D074D00252386 /* Frameworks */,
@@ -161,9 +164,9 @@
 			dependencies = (
 				5D4833181A9D074D00252386 /* PBXTargetDependency */,
 			);
-			name = CocoaAsyncSocketTests;
+			name = SuperSocketTests;
 			productName = CocoaAsyncSocketTests;
-			productReference = 5D4833151A9D074D00252386 /* CocoaAsyncSocketTests.xctest */;
+			productReference = 5D4833151A9D074D00252386 /* SuperSocket.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -172,7 +175,7 @@
 		5D4833011A9D074D00252386 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = livio;
 				TargetAttributes = {
 					5D4833091A9D074D00252386 = {
@@ -183,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5D4833041A9D074D00252386 /* Build configuration list for PBXProject "CocoaAsyncSocket" */;
+			buildConfigurationList = 5D4833041A9D074D00252386 /* Build configuration list for PBXProject "SuperSocket" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -195,8 +198,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5D4833091A9D074D00252386 /* CocoaAsyncSocket */,
-				5D4833141A9D074D00252386 /* CocoaAsyncSocketTests */,
+				5D4833091A9D074D00252386 /* SuperSocket */,
+				5D4833141A9D074D00252386 /* SuperSocketTests */,
 			);
 		};
 /* End PBXProject section */
@@ -206,6 +209,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D77F9A01B55976D0013F9A7 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -223,8 +227,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D48332D1A9D07A700252386 /* GCDAsyncUdpSocket.m in Sources */,
-				5D48332B1A9D07A700252386 /* GCDAsyncSocket.m in Sources */,
+				5D77F99D1B5597510013F9A7 /* SUDPSocket.m in Sources */,
+				5D77F9A21B5597770013F9A7 /* STCPSocketTests.m in Sources */,
+				5D77F99B1B5597510013F9A7 /* STCPSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,7 +237,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D48331D1A9D074D00252386 /* CocoaAsyncSocketTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +245,7 @@
 /* Begin PBXTargetDependency section */
 		5D4833181A9D074D00252386 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5D4833091A9D074D00252386 /* CocoaAsyncSocket */;
+			target = 5D4833091A9D074D00252386 /* SuperSocket */;
 			targetProxy = 5D4833171A9D074D00252386 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -268,6 +272,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -342,7 +347,8 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.livio.SuperSocket;
+				PRODUCT_NAME = SuperSocket;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -358,7 +364,8 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.livio.SuperSocket;
+				PRODUCT_NAME = SuperSocket;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -376,7 +383,8 @@
 				);
 				INFOPLIST_FILE = CocoaAsyncSocketTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.livio.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = SuperSocket;
 			};
 			name = Debug;
 		};
@@ -389,14 +397,15 @@
 				);
 				INFOPLIST_FILE = CocoaAsyncSocketTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.livio.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = SuperSocket;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5D4833041A9D074D00252386 /* Build configuration list for PBXProject "CocoaAsyncSocket" */ = {
+		5D4833041A9D074D00252386 /* Build configuration list for PBXProject "SuperSocket" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D48331E1A9D074D00252386 /* Debug */,
@@ -405,7 +414,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "CocoaAsyncSocket" */ = {
+		5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocket" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D4833211A9D074D00252386 /* Debug */,
@@ -414,7 +423,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D4833231A9D074D00252386 /* Build configuration list for PBXNativeTarget "CocoaAsyncSocketTests" */ = {
+		5D4833231A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocketTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D4833241A9D074D00252386 /* Debug */,

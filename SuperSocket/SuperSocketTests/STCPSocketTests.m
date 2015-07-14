@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
 
-@interface CocoaAsyncSocketTests : XCTestCase
+@interface STCPSocketTests : XCTestCase
 
 @end
 
-@implementation CocoaAsyncSocketTests
+@implementation STCPSocketTests
 
 - (void)setUp {
     [super setUp];
