@@ -10,6 +10,10 @@
 
 #import "SUDPSocket.h"
 
+#import "SUDPSendPacket.h"
+#import "SUDPSpecialPacket.h"
+
+
 #if !__has_feature(objc_arc)
 #warning This file must be compiled with ARC. Use -fobjc-arc flag (or convert project to ARC).
 // For more information see: https://github.com/robbiehanson/CocoaAsyncSocket/wiki/ARC
@@ -114,7 +118,7 @@ static const int logLevel = LOG_LEVEL_VERBOSE;
 }
 
 
-@class GCDAsyncUdpSendPacket;
+@class SUDPSendPacket;
 
 NSString *const SUDPSocketException = @"SUDPSocketException";
 NSString *const SUDPSocketErrorDomain = @"SUDPSocketErrorDomain";
@@ -189,7 +193,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     dispatch_source_t receive6Source;
     dispatch_source_t sendTimer;
 
-    GCDAsyncUdpSendPacket *currentSend;
+    SUDPSendPacket *currentSend;
     NSMutableArray *sendQueue;
 
     unsigned long socket4FDBytesAvailable;
@@ -267,80 +271,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 @end
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark -
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * The GCDAsyncUdpSendPacket encompasses the instructions for a single send/write.
-**/
-@interface GCDAsyncUdpSendPacket : NSObject {
-  @public
-    NSData *buffer;
-    NSTimeInterval timeout;
-    long tag;
-
-    BOOL resolveInProgress;
-    BOOL filterInProgress;
-
-    NSArray *resolvedAddresses;
-    NSError *resolveError;
-
-    NSData *address;
-    int addressFamily;
-}
-
-- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i;
-
-@end
-
-@implementation GCDAsyncUdpSendPacket
-
-- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i {
-    if ((self = [super init])) {
-        buffer = d;
-        timeout = t;
-        tag = i;
-
-        resolveInProgress = NO;
-    }
-    return self;
-}
-
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-@interface GCDAsyncUdpSpecialPacket : NSObject {
-  @public
-    //	uint8_t type;
-
-    BOOL resolveInProgress;
-
-    NSArray *addresses;
-    NSError *error;
-}
-
-- (instancetype)init;
-
-@end
-
-@implementation GCDAsyncUdpSpecialPacket
-
-- (instancetype)init {
-    self = [super init];
-    return self;
-}
-
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @implementation SUDPSocket
 
@@ -2819,7 +2751,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
           // Create special connect packet
 
-          GCDAsyncUdpSpecialPacket *packet = [[GCDAsyncUdpSpecialPacket alloc] init];
+          SUDPSpecialPacket *packet = [[SUDPSpecialPacket alloc] init];
           packet->resolveInProgress = YES;
 
           // Start asynchronous DNS resolve for host:port on background queue
@@ -2902,7 +2834,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           NSData *address = [remoteAddr copy];
           NSArray *addresses = [NSArray arrayWithObject:address];
 
-          GCDAsyncUdpSpecialPacket *packet = [[GCDAsyncUdpSpecialPacket alloc] init];
+          SUDPSpecialPacket *packet = [[SUDPSpecialPacket alloc] init];
           packet->addresses = addresses;
 
           // Updates flags, add connect packet to send queue, and pump send queue
@@ -2935,10 +2867,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
 
 
-    BOOL sendQueueReady = [currentSend isKindOfClass:[GCDAsyncUdpSpecialPacket class]];
+    BOOL sendQueueReady = [currentSend isKindOfClass:[SUDPSpecialPacket class]];
 
     if (sendQueueReady) {
-        GCDAsyncUdpSpecialPacket *connectPacket = (GCDAsyncUdpSpecialPacket *)currentSend;
+        SUDPSpecialPacket *connectPacket = (SUDPSpecialPacket *)currentSend;
 
         if (connectPacket->resolveInProgress) {
             LogVerbose(@"Waiting for DNS resolve...");
@@ -3235,7 +3167,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         return;
     }
 
-    GCDAsyncUdpSendPacket *packet = [[GCDAsyncUdpSendPacket alloc] initWithData:data timeout:timeout tag:tag];
+    SUDPSendPacket *packet = [[SUDPSendPacket alloc] initWithData:data timeout:timeout tag:tag];
 
     dispatch_async(socketQueue, ^{
       @autoreleasepool {
@@ -3257,7 +3189,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         return;
     }
 
-    GCDAsyncUdpSendPacket *packet = [[GCDAsyncUdpSendPacket alloc] initWithData:data timeout:timeout tag:tag];
+    SUDPSendPacket *packet = [[SUDPSendPacket alloc] initWithData:data timeout:timeout tag:tag];
     packet->resolveInProgress = YES;
 
     [self asyncResolveHost:host
@@ -3295,7 +3227,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         return;
     }
 
-    GCDAsyncUdpSendPacket *packet = [[GCDAsyncUdpSendPacket alloc] initWithData:data timeout:timeout tag:tag];
+    SUDPSendPacket *packet = [[SUDPSendPacket alloc] initWithData:data timeout:timeout tag:tag];
     packet->addressFamily = [SUDPSocket familyFromAddress:remoteAddr];
     packet->address = remoteAddr;
 
@@ -3365,7 +3297,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
             currentSend = [sendQueue objectAtIndex:0];
             [sendQueue removeObjectAtIndex:0];
 
-            if ([currentSend isKindOfClass:[GCDAsyncUdpSpecialPacket class]]) {
+            if ([currentSend isKindOfClass:[SUDPSpecialPacket class]]) {
                 [self maybeConnect];
 
                 return; // The maybeConnect method, if it connects, will invoke this method again
@@ -3481,7 +3413,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
             // Scenario 1 of 3 - Need to asynchronously query sendFilter
 
             currentSend->filterInProgress = YES;
-            GCDAsyncUdpSendPacket *sendPacket = currentSend;
+            SUDPSendPacket *sendPacket = currentSend;
 
             dispatch_async(sendFilterQueue, ^{
               @autoreleasepool {
