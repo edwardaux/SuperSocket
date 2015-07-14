@@ -20,7 +20,7 @@
     BOOL resolveInProgress;
     BOOL filterInProgress;
     
-    NSArray *resolvedAddresses;
+    NSArray<NSData *> *resolvedAddresses;
     NSError *resolveError;
     
     NSData *address;

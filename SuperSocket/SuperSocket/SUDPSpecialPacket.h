@@ -14,7 +14,7 @@
     
     BOOL resolveInProgress;
     
-    NSArray *addresses;
+    NSArray<NSData *> *addresses;
     NSError *error;
 }
 

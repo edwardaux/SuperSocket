@@ -2464,7 +2464,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     NSString *interface = nil;
 
-    NSArray *components = [interfaceDescription componentsSeparatedByString:@":"];
+    NSArray<NSString *> *components = [interfaceDescription componentsSeparatedByString:@":"];
     if ([components count] > 0) {
         NSString *temp = [components objectAtIndex:0];
         if ([temp length] > 0) {

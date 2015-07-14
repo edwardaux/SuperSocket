@@ -997,7 +997,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 **/
 - (void)asyncResolveHost:(NSString *)aHost
                     port:(uint16_t)port
-     withCompletionBlock:(void (^)(NSArray *addresses, NSError *error))completionBlock {
+     withCompletionBlock:(void (^)(NSArray<NSData *> *addresses, NSError *error))completionBlock {
     LogTrace();
 
     // Check parameter(s)
@@ -1020,9 +1020,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     // It's possible that the given aHost parameter is actually a NSMutableString.
     // So we want to copy it now, within this block that will be executed synchronously.
     // This way the asynchronous lookup block below doesn't have to worry about it changing.
-
     NSString *host = [aHost copy];
-
 
     dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(globalConcurrentQueue, ^{
@@ -1103,7 +1101,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
  * Returns the address family (AF_INET or AF_INET6) of the picked address,
  * or AF_UNSPEC and the corresponding error is there's a problem.
 **/
-- (int)getAddress:(NSData **)addressPtr error:(NSError **)errorPtr fromAddresses:(NSArray *)addresses {
+- (int)getAddress:(NSData **)addressPtr error:(NSError **)errorPtr fromAddresses:(NSArray<NSData *> *)addresses {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
     NSAssert([addresses count] > 0, @"Expected at least one address");
 
@@ -2757,8 +2755,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           LogVerbose(@"Dispatching DNS resolve for connect...");
 
           [self asyncResolveHost:host
-                             port:port
-              withCompletionBlock:^(NSArray *addresses, NSError *error) {
+                            port:port
+            withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
 
                 // The asyncResolveHost:port:: method asynchronously dispatches a task onto the global concurrent queue,
                 // and immediately returns. Once the async resolve task completes,
@@ -2830,7 +2828,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           // So we copy it to be safe.
 
           NSData *address = [remoteAddr copy];
-          NSArray *addresses = [NSArray arrayWithObject:address];
+          NSArray<NSData *> *addresses = @[address];
 
           SUDPSpecialPacket *packet = [[SUDPSpecialPacket alloc] init];
           packet->addresses = addresses;
@@ -3191,8 +3189,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     packet->resolveInProgress = YES;
 
     [self asyncResolveHost:host
-                       port:port
-        withCompletionBlock:^(NSArray *addresses, NSError *error) {
+                      port:port
+       withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
 
           // The asyncResolveHost:port:: method asynchronously dispatches a task onto the global concurrent queue,
           // and immediately returns. Once the async resolve task completes,
