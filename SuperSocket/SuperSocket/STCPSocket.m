@@ -4646,7 +4646,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
             NSDictionary *tlsSettings = tlsPacket->tlsSettings;
 
             NSNumber *value = [tlsSettings objectForKey:STCPSocketUseCFStreamForTLS];
-            if (value && [value boolValue] == YES)
+            if (value && [value boolValue])
                 useSecureTransport = NO;
         }
 #endif

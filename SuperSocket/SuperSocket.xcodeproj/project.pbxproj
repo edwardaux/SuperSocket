@@ -27,6 +27,8 @@
 		5D77F9C81B55A13A0013F9A7 /* STCPWritePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9C61B55A13A0013F9A7 /* STCPWritePacket.m */; };
 		5D77F9CB1B55A1750013F9A7 /* STCPSpecialPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9C91B55A1750013F9A7 /* STCPSpecialPacket.h */; };
 		5D77F9CC1B55A1750013F9A7 /* STCPSpecialPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9CA1B55A1750013F9A7 /* STCPSpecialPacket.m */; };
+		5D77F9CF1B55A8B30013F9A7 /* STCPSocketDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9CE1B55A8B30013F9A7 /* STCPSocketDelegate.h */; };
+		5D77F9D21B55AAD80013F9A7 /* SUDPSocketDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9D11B55AAD80013F9A7 /* SUDPSocketDelegate.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +64,8 @@
 		5D77F9C61B55A13A0013F9A7 /* STCPWritePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STCPWritePacket.m; path = SuperSocket/STCPWritePacket.m; sourceTree = SOURCE_ROOT; };
 		5D77F9C91B55A1750013F9A7 /* STCPSpecialPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STCPSpecialPacket.h; sourceTree = SOURCE_ROOT; };
 		5D77F9CA1B55A1750013F9A7 /* STCPSpecialPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STCPSpecialPacket.m; sourceTree = SOURCE_ROOT; };
+		5D77F9CE1B55A8B30013F9A7 /* STCPSocketDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STCPSocketDelegate.h; path = SuperSocket/STCPSocketDelegate.h; sourceTree = SOURCE_ROOT; };
+		5D77F9D11B55AAD80013F9A7 /* SUDPSocketDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUDPSocketDelegate.h; path = SuperSocket/SUDPSocketDelegate.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,10 +110,6 @@
 			children = (
 				5D77F9BC1B55A0A40013F9A7 /* TCP */,
 				5D77F9B31B559FDD0013F9A7 /* UDP */,
-				5D77F9951B5597510013F9A7 /* STCPSocket.h */,
-				5D77F9961B5597510013F9A7 /* STCPSocket.m */,
-				5D77F9971B5597510013F9A7 /* SUDPSocket.h */,
-				5D77F9981B5597510013F9A7 /* SUDPSocket.m */,
 				5D77F9991B5597510013F9A7 /* SuperSocket.h */,
 				5D48330D1A9D074D00252386 /* Supporting Files */,
 			);
@@ -137,15 +137,26 @@
 		5D77F9B31B559FDD0013F9A7 /* UDP */ = {
 			isa = PBXGroup;
 			children = (
-				5D77F9B41B559FF90013F9A7 /* SUDPSendPacket.h */,
-				5D77F9B51B559FF90013F9A7 /* SUDPSendPacket.m */,
-				5D77F9B81B55A0690013F9A7 /* SUDPSpecialPacket.h */,
-				5D77F9B91B55A0690013F9A7 /* SUDPSpecialPacket.m */,
+				5D77F9D11B55AAD80013F9A7 /* SUDPSocketDelegate.h */,
+				5D77F9971B5597510013F9A7 /* SUDPSocket.h */,
+				5D77F9981B5597510013F9A7 /* SUDPSocket.m */,
+				5D77F9D01B55A95D0013F9A7 /* Internal */,
 			);
 			name = UDP;
 			sourceTree = "<group>";
 		};
 		5D77F9BC1B55A0A40013F9A7 /* TCP */ = {
+			isa = PBXGroup;
+			children = (
+				5D77F9CE1B55A8B30013F9A7 /* STCPSocketDelegate.h */,
+				5D77F9951B5597510013F9A7 /* STCPSocket.h */,
+				5D77F9961B5597510013F9A7 /* STCPSocket.m */,
+				5D77F9CD1B55A88A0013F9A7 /* Internal */,
+			);
+			name = TCP;
+			sourceTree = "<group>";
+		};
+		5D77F9CD1B55A88A0013F9A7 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
 				5D77F9BD1B55A0CC0013F9A7 /* STCPSocketPreBuffer.h */,
@@ -157,7 +168,18 @@
 				5D77F9C91B55A1750013F9A7 /* STCPSpecialPacket.h */,
 				5D77F9CA1B55A1750013F9A7 /* STCPSpecialPacket.m */,
 			);
-			name = TCP;
+			name = Internal;
+			sourceTree = "<group>";
+		};
+		5D77F9D01B55A95D0013F9A7 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				5D77F9B41B559FF90013F9A7 /* SUDPSendPacket.h */,
+				5D77F9B51B559FF90013F9A7 /* SUDPSendPacket.m */,
+				5D77F9B81B55A0690013F9A7 /* SUDPSpecialPacket.h */,
+				5D77F9B91B55A0690013F9A7 /* SUDPSpecialPacket.m */,
+			);
+			name = Internal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,6 +189,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D77F9D21B55AAD80013F9A7 /* SUDPSocketDelegate.h in Headers */,
 				5D77F9B61B559FF90013F9A7 /* SUDPSendPacket.h in Headers */,
 				5D77F99E1B5597510013F9A7 /* SuperSocket.h in Headers */,
 				5D77F9BA1B55A0690013F9A7 /* SUDPSpecialPacket.h in Headers */,
@@ -175,6 +198,7 @@
 				5D77F9CB1B55A1750013F9A7 /* STCPSpecialPacket.h in Headers */,
 				5D77F99A1B5597510013F9A7 /* STCPSocket.h in Headers */,
 				5D77F9C31B55A10B0013F9A7 /* STCPReadPacket.h in Headers */,
+				5D77F9CF1B55A8B30013F9A7 /* STCPSocketDelegate.h in Headers */,
 				5D77F99C1B5597510013F9A7 /* SUDPSocket.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
