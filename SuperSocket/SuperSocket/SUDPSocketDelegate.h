@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class SUDPSocket;
+
+
 @protocol SUDPSocketDelegate <NSObject>
 @optional
 

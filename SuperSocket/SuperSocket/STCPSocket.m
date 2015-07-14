@@ -190,7 +190,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     uint32_t flags;
     uint16_t config;
 
-    __weak id delegate;
+    __weak id<STCPSocketDelegate> delegate;
     dispatch_queue_t delegateQueue;
 
     int socket4FD;
@@ -242,11 +242,11 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     return [self initWithDelegate:nil delegateQueue:NULL socketQueue:sq];
 }
 
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq {
+- (instancetype)initWithDelegate:(id<STCPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq {
     return [self initWithDelegate:aDelegate delegateQueue:dq socketQueue:NULL];
 }
 
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq {
+- (instancetype)initWithDelegate:(id<STCPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq {
     if ((self = [super init])) {
         delegate = aDelegate;
         delegateQueue = dq;
@@ -345,7 +345,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 #pragma mark Configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (id)delegate {
+- (id<STCPSocketDelegate>)delegate {
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         return delegate;
     } else {
@@ -359,7 +359,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     }
 }
 
-- (void)setDelegate:(id)newDelegate synchronously:(BOOL)synchronously {
+- (void)setDelegate:(id<STCPSocketDelegate>)newDelegate synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
       delegate = newDelegate;
     };
@@ -374,11 +374,11 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     }
 }
 
-- (void)setDelegate:(id)newDelegate {
+- (void)setDelegate:(id<STCPSocketDelegate>)newDelegate {
     [self setDelegate:newDelegate synchronously:NO];
 }
 
-- (void)synchronouslySetDelegate:(id)newDelegate {
+- (void)synchronouslySetDelegate:(id<STCPSocketDelegate>)newDelegate {
     [self setDelegate:newDelegate synchronously:YES];
 }
 
@@ -427,7 +427,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     [self setDelegateQueue:newDelegateQueue synchronously:YES];
 }
 
-- (void)getDelegate:(id *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr {
+- (void)getDelegate:(id<STCPSocketDelegate> *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr {
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         if (delegatePtr)
             *delegatePtr = delegate;
@@ -449,7 +449,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     }
 }
 
-- (void)setDelegate:(id)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
+- (void)setDelegate:(id<STCPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
 
       delegate = newDelegate;
@@ -474,11 +474,11 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     }
 }
 
-- (void)setDelegate:(id)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
+- (void)setDelegate:(id<STCPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
     [self setDelegate:newDelegate delegateQueue:newDelegateQueue synchronously:NO];
 }
 
-- (void)synchronouslySetDelegate:(id)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
+- (void)synchronouslySetDelegate:(id<STCPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
     [self setDelegate:newDelegate delegateQueue:newDelegateQueue synchronously:YES];
 }
 

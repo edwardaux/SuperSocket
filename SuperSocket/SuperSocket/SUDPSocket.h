@@ -13,6 +13,8 @@
 #import <TargetConditionals.h>
 #import <Availability.h>
 
+#import "SUDPSocketDelegate.h"
+
 extern NSString *const SUDPSocketException;
 extern NSString *const SUDPSocketErrorDomain;
 
@@ -126,22 +128,22 @@ typedef BOOL (^SUDPSocketSendFilterBlock)(NSData *data, NSData *address, long ta
 **/
 - (instancetype)init;
 - (instancetype)initWithSocketQueue:(dispatch_queue_t)sq;
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq;
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq;
+- (instancetype)initWithDelegate:(id<SUDPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq;
+- (instancetype)initWithDelegate:(id<SUDPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq NS_DESIGNATED_INITIALIZER;
 
 #pragma mark Configuration
 
-- (id)delegate;
-- (void)setDelegate:(id)delegate;
-- (void)synchronouslySetDelegate:(id)delegate;
+- (id<SUDPSocketDelegate>)delegate;
+- (void)setDelegate:(id<SUDPSocketDelegate>)delegate;
+- (void)synchronouslySetDelegate:(id<SUDPSocketDelegate>)delegate;
 
 - (dispatch_queue_t)delegateQueue;
 - (void)setDelegateQueue:(dispatch_queue_t)delegateQueue;
 - (void)synchronouslySetDelegateQueue:(dispatch_queue_t)delegateQueue;
 
-- (void)getDelegate:(id *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr;
-- (void)setDelegate:(id)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
-- (void)synchronouslySetDelegate:(id)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
+- (void)getDelegate:(id<SUDPSocketDelegate> *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr;
+- (void)setDelegate:(id<SUDPSocketDelegate>)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
+- (void)synchronouslySetDelegate:(id<SUDPSocketDelegate>)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
 
 /**
  * By default, both IPv4 and IPv6 are enabled.

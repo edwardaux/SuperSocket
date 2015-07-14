@@ -161,11 +161,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface SUDPSocket () {
-#if __has_feature(objc_arc_weak)
-    __weak id delegate;
-#else
-    __unsafe_unretained id delegate;
-#endif
+    __weak id<SUDPSocketDelegate> delegate;
     dispatch_queue_t delegateQueue;
 
     SUDPSocketReceiveFilterBlock receiveFilterBlock;
@@ -288,13 +284,13 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     return [self initWithDelegate:nil delegateQueue:NULL socketQueue:sq];
 }
 
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq {
+- (instancetype)initWithDelegate:(id<SUDPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq {
     LogTrace();
 
     return [self initWithDelegate:aDelegate delegateQueue:dq socketQueue:NULL];
 }
 
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq {
+- (instancetype)initWithDelegate:(id<SUDPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq {
     LogTrace();
 
     if ((self = [super init])) {
@@ -399,7 +395,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 #pragma mark Configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (id)delegate {
+- (id<SUDPSocketDelegate>)delegate {
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         return delegate;
     } else {
@@ -413,7 +409,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     }
 }
 
-- (void)setDelegate:(id)newDelegate synchronously:(BOOL)synchronously {
+- (void)setDelegate:(id<SUDPSocketDelegate>)newDelegate synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
       delegate = newDelegate;
     };
@@ -421,18 +417,19 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
     } else {
-        if (synchronously)
+        if (synchronously) {
             dispatch_sync(socketQueue, block);
-        else
+        } else {
             dispatch_async(socketQueue, block);
+        }
     }
 }
 
-- (void)setDelegate:(id)newDelegate {
+- (void)setDelegate:(id<SUDPSocketDelegate>)newDelegate {
     [self setDelegate:newDelegate synchronously:NO];
 }
 
-- (void)synchronouslySetDelegate:(id)newDelegate {
+- (void)synchronouslySetDelegate:(id<SUDPSocketDelegate>)newDelegate {
     [self setDelegate:newDelegate synchronously:YES];
 }
 
@@ -481,7 +478,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     [self setDelegateQueue:newDelegateQueue synchronously:YES];
 }
 
-- (void)getDelegate:(id *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr {
+- (void)getDelegate:(id<SUDPSocketDelegate> *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr {
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         if (delegatePtr)
             *delegatePtr = delegate;
@@ -503,7 +500,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     }
 }
 
-- (void)setDelegate:(id)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
+- (void)setDelegate:(id<SUDPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
 
       delegate = newDelegate;
@@ -528,11 +525,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     }
 }
 
-- (void)setDelegate:(id)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
+- (void)setDelegate:(id<SUDPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
     [self setDelegate:newDelegate delegateQueue:newDelegateQueue synchronously:NO];
 }
 
-- (void)synchronouslySetDelegate:(id)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
+- (void)synchronouslySetDelegate:(id<SUDPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue {
     [self setDelegate:newDelegate delegateQueue:newDelegateQueue synchronously:YES];
 }
 
@@ -772,10 +769,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = userData;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
     return result;
 }

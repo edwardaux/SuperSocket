@@ -83,28 +83,28 @@ typedef NS_ENUM(NSUInteger, STCPSocketError) {
 **/
 - (instancetype)init;
 - (instancetype)initWithSocketQueue:(dispatch_queue_t)sq;
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq;
-- (instancetype)initWithDelegate:(id)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithDelegate:(id<STCPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq;
+- (instancetype)initWithDelegate:(id<STCPSocketDelegate>)aDelegate delegateQueue:(dispatch_queue_t)dq socketQueue:(dispatch_queue_t)sq NS_DESIGNATED_INITIALIZER;
 
 #pragma mark Configuration
 
-@property (atomic, weak, readwrite) id delegate;
+@property (atomic, weak, readwrite) id<STCPSocketDelegate> delegate;
 #if OS_OBJECT_USE_OBJC
 @property (atomic, strong, readwrite) dispatch_queue_t delegateQueue;
 #else
 @property (atomic, assign, readwrite) dispatch_queue_t delegateQueue;
 #endif
 
-- (void)getDelegate:(id *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr;
-- (void)setDelegate:(id)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
+- (void)getDelegate:(id<STCPSocketDelegate> *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr;
+- (void)setDelegate:(id<STCPSocketDelegate>)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
 
 /**
  * If you are setting the delegate to nil within the delegate's dealloc method,
  * you may need to use the synchronous versions below.
 **/
-- (void)synchronouslySetDelegate:(id)delegate;
+- (void)synchronouslySetDelegate:(id<STCPSocketDelegate>)delegate;
 - (void)synchronouslySetDelegateQueue:(dispatch_queue_t)delegateQueue;
-- (void)synchronouslySetDelegate:(id)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
+- (void)synchronouslySetDelegate:(id<STCPSocketDelegate>)delegate delegateQueue:(dispatch_queue_t)delegateQueue;
 
 /**
  * By default, both IPv4 and IPv6 are enabled.
