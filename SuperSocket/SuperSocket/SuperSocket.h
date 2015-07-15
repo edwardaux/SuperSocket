@@ -17,5 +17,7 @@ FOUNDATION_EXPORT const unsigned char SuperSocketVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <CocoaAsyncSocket/PublicHeader.h>
 
-#import <CocoaAsyncSocket/GCDAsyncSocket.h>
-#import <CocoaAsyncSocket/GCDAsyncUdpSocket.h>
+#import <SuperSocket/STCPSocket.h>
+#import <SuperSocket/STCPSocketDelegate.h>
+#import <SuperSocket/SUDPSocket.h>
+#import <SuperSocket/SUDPSocketDelegate.h>
