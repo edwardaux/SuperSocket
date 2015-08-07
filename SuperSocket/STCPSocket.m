@@ -978,7 +978,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     // Notify delegate
 
     if (delegateQueue) {
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -1595,7 +1595,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     NSString *host = [self connectedHost];
     uint16_t port = [self connectedPort];
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didConnectToHost:port:)]) {
         SetupStreamsPart1();
@@ -1860,7 +1860,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     sslWriteCachedLength = 0;
 
     if (shouldCallDelegate) {
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
         __strong id theSelf = isDeallocating ? nil : self;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidDisconnect:withError:)]) {
@@ -3741,7 +3741,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     } else if (totalBytesReadForCurrentRead > 0) {
         // We're not done read type #2 or #3 yet, but we have read in some bytes
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReadPartialDataOfLength:tag:)]) {
             long theReadTag = currentRead->tag;
@@ -3838,7 +3838,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
             // Notify the delegate that we're going half-duplex
 
-            __strong id theDelegate = delegate;
+            __strong id<STCPSocketDelegate> theDelegate = delegate;
 
             if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidCloseReadStream:)]) {
                 dispatch_async(delegateQueue, ^{
@@ -3910,7 +3910,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         result = [NSData dataWithBytesNoCopy:buffer length:currentRead->bytesDone freeWhenDone:NO];
     }
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReadData:withTag:)]) {
         STCPReadPacket *theRead = currentRead; // Ensure currentRead retained since result may not own buffer
@@ -3982,7 +3982,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     flags |= kReadsPaused;
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:shouldTimeoutReadWithTag:elapsed:bytesDone:)]) {
         STCPReadPacket *theRead = currentRead;
@@ -4448,7 +4448,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         if (bytesWritten > 0) {
             // We're not done with the entire write, but we have written some bytes
 
-            __strong id theDelegate = delegate;
+            __strong id<STCPSocketDelegate> theDelegate = delegate;
 
             if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didWritePartialDataOfLength:tag:)]) {
                 long theWriteTag = currentWrite->tag;
@@ -4477,7 +4477,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     NSAssert(currentWrite, @"Trying to complete current write when there is no current write.");
 
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didWriteDataWithTag:)]) {
         long theWriteTag = currentWrite->tag;
@@ -4549,7 +4549,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     flags |= kWritesPaused;
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:shouldTimeoutWriteWithTag:elapsed:bytesDone:)]) {
         STCPWritePacket *theWrite = currentWrite;
@@ -5281,7 +5281,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 
         flags |= kSocketSecure;
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidSecure:)]) {
             dispatch_async(delegateQueue, ^{
@@ -5333,7 +5333,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
           }
         };
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReceiveTrust:completionHandler:)]) {
             dispatch_async(delegateQueue, ^{
@@ -5403,7 +5403,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 
         flags |= kSocketSecure;
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidSecure:)]) {
             dispatch_async(delegateQueue, ^{
