@@ -800,7 +800,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didConnectToAddress:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
         NSData *address = [anAddress copy]; // In case param is NSMutableData
 
         dispatch_async(delegateQueue, ^{
@@ -815,7 +815,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didNotConnect:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -829,7 +829,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didSendDataWithTag:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -843,7 +843,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didNotSendDataWithTag:dueToError:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -859,7 +859,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     SEL selector = @selector(udpSocket:didReceiveData:fromAddress:withFilterContext:);
 
     if (delegateQueue && [delegate respondsToSelector:selector]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -873,7 +873,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocketDidClose:withError:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
