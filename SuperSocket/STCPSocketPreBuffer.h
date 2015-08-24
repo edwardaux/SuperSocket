@@ -29,7 +29,7 @@
 @interface STCPSocketPreBuffer : NSObject {
     uint8_t *preBuffer;
     size_t preBufferSize;
-    
+
     uint8_t *readPointer;
     uint8_t *writePointer;
 }

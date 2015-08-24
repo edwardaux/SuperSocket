@@ -113,14 +113,14 @@ static const int logLevel = STCPSocketLogLevel;
  * Seeing a return statements within an inner block
  * can sometimes be mistaken for a return point of the enclosing method.
  * This makes inline blocks a bit easier to read.
-**/
+ **/
 #define return_from_block return
 
 /**
  * A socket file descriptor is really just an integer.
  * It represents the index of the socket within the kernel.
  * This makes invalid file descriptor comparisons easier to read.
-**/
+ **/
 #define SOCKET_NULL -1
 
 
@@ -228,6 +228,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     STCPSocketPreBuffer *sslPreBuffer;
     size_t sslWriteCachedLength;
     OSStatus sslErrCode;
+    OSStatus lastSSLHandshakeError;
 
     void *IsOnSocketQueueOrTargetQueueKey;
 
@@ -251,11 +252,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         delegate = aDelegate;
         delegateQueue = dq;
 
-#if !OS_OBJECT_USE_OBJC
-        if (dq)
-            dispatch_retain(dq);
-#endif
-
         socket4FD = SOCKET_NULL;
         socket6FD = SOCKET_NULL;
         stateIndex = 0;
@@ -269,9 +265,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
                      @"The given socketQueue parameter must not be a concurrent queue.");
 
             socketQueue = sq;
-#if !OS_OBJECT_USE_OBJC
-            dispatch_retain(sq);
-#endif
         } else {
             socketQueue = dispatch_queue_create([STCPSocketQueueName UTF8String], NULL);
         }
@@ -325,17 +318,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     }
 
     delegate = nil;
-
-#if !OS_OBJECT_USE_OBJC
-    if (delegateQueue)
-        dispatch_release(delegateQueue);
-#endif
     delegateQueue = NULL;
-
-#if !OS_OBJECT_USE_OBJC
-    if (socketQueue)
-        dispatch_release(socketQueue);
-#endif
     socketQueue = NULL;
 
     LogInfo(@"%@ - %@ (finish)", THIS_METHOD, self);
@@ -398,14 +381,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 - (void)setDelegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
-
-#if !OS_OBJECT_USE_OBJC
-      if (delegateQueue)
-          dispatch_release(delegateQueue);
-      if (newDelegateQueue)
-          dispatch_retain(newDelegateQueue);
-#endif
-
       delegateQueue = newDelegateQueue;
     };
 
@@ -451,16 +426,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 - (void)setDelegate:(id<STCPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
-
       delegate = newDelegate;
-
-#if !OS_OBJECT_USE_OBJC
-      if (delegateQueue)
-          dispatch_release(delegateQueue);
-      if (newDelegateQueue)
-          dispatch_retain(newDelegateQueue);
-#endif
-
       delegateQueue = newDelegateQueue;
     };
 
@@ -836,18 +802,8 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 
               dispatch_source_set_cancel_handler(accept4Source, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
-
-#if !OS_OBJECT_USE_OBJC
-                LogVerbose(@"dispatch_release(accept4Source)");
-                dispatch_release(acceptSource);
-#endif
-
                 LogVerbose(@"close(socket4FD)");
                 close(socketFD);
-
-#pragma clang diagnostic pop
               });
 
               LogVerbose(@"dispatch_resume(accept4Source)");
@@ -864,11 +820,10 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
               dispatch_source_set_event_handler(accept6Source, ^{
                 @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
                     __strong STCPSocket *strongSelf = weakSelf;
-                    if (strongSelf == nil)
+                    if (strongSelf == nil) {
                         return_from_block;
+                    }
 
                     LogVerbose(@"event6Block");
 
@@ -879,24 +834,13 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
                     while ([strongSelf doAccept:socketFD] && (++i < numPendingConnections))
                         ;
-
-#pragma clang diagnostic pop
                 }
               });
 
               dispatch_source_set_cancel_handler(accept6Source, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
-
-#if !OS_OBJECT_USE_OBJC
-                LogVerbose(@"dispatch_release(accept6Source)");
-                dispatch_release(acceptSource);
-#endif
 
                 LogVerbose(@"close(socket6FD)");
                 close(socketFD);
-
-#pragma clang diagnostic pop
               });
 
               LogVerbose(@"dispatch_resume(accept6Source)");
@@ -909,10 +853,11 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
     if (result == NO) {
         LogInfo(@"Error in accept: %@", err);
@@ -978,7 +923,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     // Notify delegate
 
     if (delegateQueue) {
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -1013,16 +958,9 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
               });
 
               // Notify delegate
-
               if ([theDelegate respondsToSelector:@selector(socket:didAcceptNewSocket:)]) {
                   [theDelegate socket:self didAcceptNewSocket:acceptedSocket];
               }
-
-// Release the socket queue returned from the delegate (it was retained by acceptedSocket)
-#if !OS_OBJECT_USE_OBJC
-              if (childSocketQueue)
-                  dispatch_release(childSocketQueue);
-#endif
 
               // The accepted socket should have been retained by the delegate.
               // Otherwise it gets properly released when exiting the block.
@@ -1033,20 +971,19 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     return YES;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Connecting
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * This method runs through the various checks required prior to a connection attempt.
  * It is shared between the connectToHost and connectToAddress methods.
- * 
-**/
+ *
+ **/
 - (BOOL)preConnectWithInterface:(NSString *)interface error:(NSError **)errPtr {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
 
-    if (delegate == nil) // Must have delegate set
-    {
+    // Must have delegate set
+    if (delegate == nil) {
         if (errPtr) {
             NSString *msg = @"Attempting to connect without a delegate. Set a delegate first.";
             *errPtr = [self badConfigError:msg];
@@ -1186,14 +1123,13 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
           dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
           dispatch_async(globalConcurrentQueue, ^{
             @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
                 NSError *lookupErr = nil;
                 NSMutableArray *addresses = [STCPSocket lookupHost:hostCpy port:port error:&lookupErr];
 
                 __strong STCPSocket *strongSelf = weakSelf;
-                if (strongSelf == nil)
+                if (strongSelf == nil) {
                     return_from_block;
+                }
 
                 if (lookupErr) {
                     dispatch_async(strongSelf->socketQueue, ^{
@@ -1219,8 +1155,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
                       }
                     });
                 }
-
-#pragma clang diagnostic pop
             }
           });
 
@@ -1230,14 +1164,17 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
 
-    if (errPtr)
+    if (errPtr) {
         *errPtr = preConnectErr;
+    }
+
     return result;
 }
 
@@ -1385,11 +1322,11 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 /**
  * This method is called if the DNS lookup fails.
  * This method is executed on the socketQueue.
- * 
+ *
  * Since the DNS lookup executed synchronously on a global concurrent queue,
  * the original connection request may have already been cancelled or timed-out by the time this method is invoked.
  * The lookupIndex tells us whether the lookup is still valid or not.
-**/
+ **/
 - (void)lookup:(int)aStateIndex didFail:(NSError *)error {
     LogTrace();
 
@@ -1489,8 +1426,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(globalConcurrentQueue, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
 
       int result = connect(socketFD, (const struct sockaddr *)[address bytes], (socklen_t)[address length]);
 
@@ -1513,8 +1448,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
             }
           });
       }
-
-#pragma clang diagnostic pop
     });
 
     LogVerbose(@"Connecting...");
@@ -1595,7 +1528,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     NSString *host = [self connectedHost];
     uint16_t port = [self connectedPort];
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didConnectToHost:port:)]) {
         SetupStreamsPart1();
@@ -1665,30 +1598,14 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
         dispatch_source_set_event_handler(connectTimer, ^{
           @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
               __strong STCPSocket *strongSelf = weakSelf;
-              if (strongSelf == nil)
+              if (strongSelf == nil) {
                   return_from_block;
+              }
 
               [strongSelf doConnectTimeout];
-
-#pragma clang diagnostic pop
           }
         });
-
-#if !OS_OBJECT_USE_OBJC
-        dispatch_source_t theConnectTimer = connectTimer;
-        dispatch_source_set_cancel_handler(connectTimer, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
-
-          LogVerbose(@"dispatch_release(connectTimer)");
-          dispatch_release(theConnectTimer);
-
-#pragma clang diagnostic pop
-        });
-#endif
 
         dispatch_time_t tt = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC));
         dispatch_source_set_timer(connectTimer, tt, DISPATCH_TIME_FOREVER, 0);
@@ -1728,9 +1645,8 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     [self closeWithError:[self connectTimeoutError]];
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Disconnecting
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)closeWithError:(NSError *)error {
     LogTrace();
@@ -1770,7 +1686,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 #endif
 
     [sslPreBuffer reset];
-    sslErrCode = noErr;
+    sslErrCode = lastSSLHandshakeError = noErr;
 
     if (sslContext) {
         // Getting a linker error here about the SSLx() functions?
@@ -1857,9 +1773,10 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     // Clear stored socket info and all flags (config remains as is)
     socketFDBytesAvailable = 0;
     flags = 0;
+    sslWriteCachedLength = 0;
 
     if (shouldCallDelegate) {
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
         __strong id theSelf = isDeallocating ? nil : self;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidDisconnect:withError:)]) {
@@ -1926,7 +1843,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
  * Closes the socket if possible.
  * That is, if all writes have completed, and we're set to disconnect after writing,
  * or if all reads have completed, and we're set to disconnect after reading.
-**/
+ **/
 - (void)maybeClose {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
 
@@ -2011,7 +1928,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 /**
  * Returns a standard AsyncSocket maxed out error.
-**/
+ **/
 - (NSError *)readMaxedOutError {
     NSString *errMsg = NSLocalizedStringWithDefaultValue(@"STCPSocketReadMaxedOutError",
                                                          @"STCPSocket",
@@ -2026,7 +1943,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 /**
  * Returns a standard AsyncSocket write timeout error.
-**/
+ **/
 - (NSError *)readTimeoutError {
     NSString *errMsg = NSLocalizedStringWithDefaultValue(@"STCPSocketReadTimeoutError",
                                                          @"STCPSocket",
@@ -2041,7 +1958,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 /**
  * Returns a standard AsyncSocket write timeout error.
-**/
+ **/
 - (NSError *)writeTimeoutError {
     NSString *errMsg = NSLocalizedStringWithDefaultValue(@"STCPSocketWriteTimeoutError",
                                                          @"STCPSocket",
@@ -2449,12 +2366,12 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 /**
  * Finds the address of an interface description.
  * An inteface description may be an interface name (en0, en1, lo0) or corresponding IP (192.168.4.34).
- * 
+ *
  * The interface description may optionally contain a port number at the end, separated by a colon.
  * If a non-zero port parameter is provided, any port number in the interface description is ignored.
- * 
+ *
  * The returned value is a 'struct sockaddr' wrapped in an NSMutableData object.
-**/
+ **/
 - (void)getInterfaceAddress4:(NSMutableData **)interfaceAddr4Ptr
                     address6:(NSMutableData **)interfaceAddr6Ptr
              fromDescription:(NSString *)interfaceDescription
@@ -2605,8 +2522,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     dispatch_source_set_event_handler(readSource, ^{
       @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
           __strong STCPSocket *strongSelf = weakSelf;
           if (strongSelf == nil)
               return_from_block;
@@ -2620,15 +2535,11 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
               [strongSelf doReadData];
           else
               [strongSelf doReadEOF];
-
-#pragma clang diagnostic pop
       }
     });
 
     dispatch_source_set_event_handler(writeSource, ^{
       @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
           __strong STCPSocket *strongSelf = weakSelf;
           if (strongSelf == nil)
               return_from_block;
@@ -2637,56 +2548,28 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
           strongSelf->flags |= kSocketCanAcceptBytes;
           [strongSelf doWriteData];
-
-#pragma clang diagnostic pop
       }
     });
 
     // Setup cancel handlers
 
     __block int socketFDRefCount = 2;
-
-#if !OS_OBJECT_USE_OBJC
-    dispatch_source_t theReadSource = readSource;
-    dispatch_source_t theWriteSource = writeSource;
-#endif
-
     dispatch_source_set_cancel_handler(readSource, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
-
       LogVerbose(@"readCancelBlock");
-
-#if !OS_OBJECT_USE_OBJC
-      LogVerbose(@"dispatch_release(readSource)");
-      dispatch_release(theReadSource);
-#endif
 
       if (--socketFDRefCount == 0) {
           LogVerbose(@"close(socketFD)");
           close(socketFD);
       }
-
-#pragma clang diagnostic pop
     });
 
     dispatch_source_set_cancel_handler(writeSource, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
-
       LogVerbose(@"writeCancelBlock");
-
-#if !OS_OBJECT_USE_OBJC
-      LogVerbose(@"dispatch_release(writeSource)");
-      dispatch_release(theWriteSource);
-#endif
 
       if (--socketFDRefCount == 0) {
           LogVerbose(@"close(socketFD)");
           close(socketFD);
       }
-
-#pragma clang diagnostic pop
     });
 
     // We will not be able to read until data arrives.
@@ -2963,14 +2846,14 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 /**
  * This method starts a new read, if needed.
- * 
+ *
  * It is called when:
  * - a user requests a read
  * - after a read request has finished (to handle the next request)
  * - immediately after the socket opens to handle any pending requests
- * 
+ *
  * This method also handles auto-disconnect post read/write completion.
-**/
+ **/
 - (void)maybeDequeueRead {
     LogTrace();
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
@@ -3252,7 +3135,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         // The readQueue is waiting for SSL/TLS handshake to complete.
 
         if (flags & kStartingWriteTLS) {
-            if ([self usingSecureTransportForTLS]) {
+            if ([self usingSecureTransportForTLS] && lastSSLHandshakeError == errSSLWouldBlock) {
                 // We are in the process of a SSL Handshake.
                 // We were waiting for incoming data which has just arrived.
 
@@ -3740,7 +3623,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     } else if (totalBytesReadForCurrentRead > 0) {
         // We're not done read type #2 or #3 yet, but we have read in some bytes
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReadPartialDataOfLength:tag:)]) {
             long theReadTag = currentRead->tag;
@@ -3837,7 +3720,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
             // Notify the delegate that we're going half-duplex
 
-            __strong id theDelegate = delegate;
+            __strong id<STCPSocketDelegate> theDelegate = delegate;
 
             if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidCloseReadStream:)]) {
                 dispatch_async(delegateQueue, ^{
@@ -3909,7 +3792,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         result = [NSData dataWithBytesNoCopy:buffer length:currentRead->bytesDone freeWhenDone:NO];
     }
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReadData:withTag:)]) {
         STCPReadPacket *theRead = currentRead; // Ensure currentRead retained since result may not own buffer
@@ -3941,30 +3824,13 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
         dispatch_source_set_event_handler(readTimer, ^{
           @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
               __strong STCPSocket *strongSelf = weakSelf;
               if (strongSelf == nil)
                   return_from_block;
 
               [strongSelf doReadTimeout];
-
-#pragma clang diagnostic pop
           }
         });
-
-#if !OS_OBJECT_USE_OBJC
-        dispatch_source_t theReadTimer = readTimer;
-        dispatch_source_set_cancel_handler(readTimer, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
-
-          LogVerbose(@"dispatch_release(readTimer)");
-          dispatch_release(theReadTimer);
-
-#pragma clang diagnostic pop
-        });
-#endif
 
         dispatch_time_t tt = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC));
 
@@ -3981,7 +3847,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     flags |= kReadsPaused;
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:shouldTimeoutReadWithTag:elapsed:bytesDone:)]) {
         STCPReadPacket *theRead = currentRead;
@@ -4093,14 +3959,14 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
 /**
  * Conditionally starts a new write.
- * 
+ *
  * It is called when:
  * - a user requests a write
  * - after a write request has finished (to handle the next request)
  * - immediately after the socket opens to handle any pending requests
- * 
+ *
  * This method also handles auto-disconnect post read/write completion.
-**/
+ **/
 - (void)maybeDequeueWrite {
     LogTrace();
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
@@ -4187,7 +4053,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         // The writeQueue is waiting for SSL/TLS handshake to complete.
 
         if (flags & kStartingReadTLS) {
-            if ([self usingSecureTransportForTLS]) {
+            if ([self usingSecureTransportForTLS] && lastSSLHandshakeError == errSSLWouldBlock) {
                 // We are in the process of a SSL Handshake.
                 // We were waiting for available space in the socket's internal OS buffer to continue writing.
 
@@ -4447,7 +4313,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         if (bytesWritten > 0) {
             // We're not done with the entire write, but we have written some bytes
 
-            __strong id theDelegate = delegate;
+            __strong id<STCPSocketDelegate> theDelegate = delegate;
 
             if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didWritePartialDataOfLength:tag:)]) {
                 long theWriteTag = currentWrite->tag;
@@ -4462,7 +4328,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     }
 
     // Check for errors
-
     if (error) {
         [self closeWithError:[self errnoErrorWithReason:@"Error in write() function"]];
     }
@@ -4475,8 +4340,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     NSAssert(currentWrite, @"Trying to complete current write when there is no current write.");
 
-
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didWriteDataWithTag:)]) {
         long theWriteTag = currentWrite->tag;
@@ -4508,30 +4372,13 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
         dispatch_source_set_event_handler(writeTimer, ^{
           @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
               __strong STCPSocket *strongSelf = weakSelf;
               if (strongSelf == nil)
                   return_from_block;
 
               [strongSelf doWriteTimeout];
-
-#pragma clang diagnostic pop
           }
         });
-
-#if !OS_OBJECT_USE_OBJC
-        dispatch_source_t theWriteTimer = writeTimer;
-        dispatch_source_set_cancel_handler(writeTimer, ^{
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
-
-          LogVerbose(@"dispatch_release(writeTimer)");
-          dispatch_release(theWriteTimer);
-
-#pragma clang diagnostic pop
-        });
-#endif
 
         dispatch_time_t tt = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(timeout * NSEC_PER_SEC));
 
@@ -4548,7 +4395,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 
     flags |= kWritesPaused;
 
-    __strong id theDelegate = delegate;
+    __strong id<STCPSocketDelegate> theDelegate = delegate;
 
     if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:shouldTimeoutWriteWithTag:elapsed:bytesDone:)]) {
         STCPWritePacket *theWrite = currentWrite;
@@ -5253,7 +5100,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
         [sslPreBuffer didWrite:preBufferLength];
     }
 
-    sslErrCode = noErr;
+    sslErrCode = lastSSLHandshakeError = noErr;
 
     // Start the SSL Handshake process
 
@@ -5271,6 +5118,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
     // Otherwise, the return value indicates an error code.
 
     OSStatus status = SSLHandshake(sslContext);
+    lastSSLHandshakeError = status;
 
     if (status == noErr) {
         LogVerbose(@"SSLHandshake complete");
@@ -5280,7 +5128,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 
         flags |= kSocketSecure;
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidSecure:)]) {
             dispatch_async(delegateQueue, ^{
@@ -5312,8 +5160,6 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 
         void (^comletionHandler)(BOOL) = ^(BOOL shouldTrust) {
           @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
               dispatch_async(theSocketQueue, ^{
                 @autoreleasepool {
                     if (trust) {
@@ -5327,12 +5173,10 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
                     }
                 }
               });
-
-#pragma clang diagnostic pop
           }
         };
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socket:didReceiveTrust:completionHandler:)]) {
             dispatch_async(delegateQueue, ^{
@@ -5381,6 +5225,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
     stateIndex++;
 
     if (shouldTrust) {
+        NSAssert(lastSSLHandshakeError == errSSLPeerAuthCompleted, @"ssl_shouldTrustPeer called when last error is %d and not errSSLPeerAuthCompleted", (int)lastSSLHandshakeError);
         [self ssl_continueSSLHandshake];
     } else {
         [self closeWithError:[self sslError:errSSLPeerBadCert]];
@@ -5402,7 +5247,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
 
         flags |= kSocketSecure;
 
-        __strong id theDelegate = delegate;
+        __strong id<STCPSocketDelegate> theDelegate = delegate;
 
         if (delegateQueue && [theDelegate respondsToSelector:@selector(socketDidSecure:)]) {
             dispatch_async(delegateQueue, ^{
@@ -5498,8 +5343,8 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
     // connection, and then a startTLS is issued.
     // So this mostly affects newer protocols (XMPP, IMAP) as opposed to older protocols (HTTPS).
 
-    if (!r1 && !r2) // Yes, the && is correct - workaround for apple bug.
-    {
+    // Yes, the && is correct - workaround for apple bug.
+    if (!r1 && !r2) {
         [self closeWithError:[self otherError:@"Error in CFStreamSetProperty"]];
         return;
     }
@@ -5905,7 +5750,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * See header file for big discussion of this method.
-**/
+ **/
 - (BOOL)autoDisconnectOnClosedReadStream {
     // Note: YES means kAllowHalfDuplexConnection is OFF
 
@@ -5924,7 +5769,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * See header file for big discussion of this method.
-**/
+ **/
 - (void)setAutoDisconnectOnClosedReadStream:(BOOL)flag {
     // Note: YES means kAllowHalfDuplexConnection is OFF
 
@@ -5945,7 +5790,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * See header file for big discussion of this method.
-**/
+ **/
 - (void)markSocketQueueTargetQueue:(dispatch_queue_t)socketNewTargetQueue {
     void *nonNullUnusedPointer = (__bridge void *)self;
     dispatch_queue_set_specific(socketNewTargetQueue, IsOnSocketQueueOrTargetQueueKey, nonNullUnusedPointer, NULL);
@@ -5953,14 +5798,14 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * See header file for big discussion of this method.
-**/
+ **/
 - (void)unmarkSocketQueueTargetQueue:(dispatch_queue_t)socketOldTargetQueue {
     dispatch_queue_set_specific(socketOldTargetQueue, IsOnSocketQueueOrTargetQueueKey, NULL, NULL);
 }
 
 /**
  * See header file for big discussion of this method.
-**/
+ **/
 - (void)performBlock:(dispatch_block_t)block {
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
         block();
@@ -5970,7 +5815,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * Questions? Have you read the header file?
-**/
+ **/
 - (int)socketFD {
     if (!dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         LogWarn(@"%@ - Method only available from within the context of a performBlock: invocation", THIS_METHOD);
@@ -5985,7 +5830,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * Questions? Have you read the header file?
-**/
+ **/
 - (int)socket4FD {
     if (!dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         LogWarn(@"%@ - Method only available from within the context of a performBlock: invocation", THIS_METHOD);
@@ -5997,7 +5842,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * Questions? Have you read the header file?
-**/
+ **/
 - (int)socket6FD {
     if (!dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         LogWarn(@"%@ - Method only available from within the context of a performBlock: invocation", THIS_METHOD);
@@ -6011,7 +5856,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * Questions? Have you read the header file?
-**/
+ **/
 - (CFReadStreamRef)readStream {
     if (!dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         LogWarn(@"%@ - Method only available from within the context of a performBlock: invocation", THIS_METHOD);
@@ -6026,7 +5871,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * Questions? Have you read the header file?
-**/
+ **/
 - (CFWriteStreamRef)writeStream {
     if (!dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         LogWarn(@"%@ - Method only available from within the context of a performBlock: invocation", THIS_METHOD);
@@ -6067,7 +5912,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
 /**
  * Questions? Have you read the header file?
-**/
+ **/
 - (BOOL)enableBackgroundingOnSocket {
     LogTrace();
 

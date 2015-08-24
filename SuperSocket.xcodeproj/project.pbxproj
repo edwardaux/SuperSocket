@@ -7,12 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D1DC7F81B754B6100236EE6 /* STCPSpecialPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D1DC7F61B754B6100236EE6 /* STCPSpecialPacket.h */; };
+		5D1DC7F91B754B6100236EE6 /* STCPSpecialPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D1DC7F71B754B6100236EE6 /* STCPSpecialPacket.m */; };
 		5D77F99A1B5597510013F9A7 /* STCPSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9951B5597510013F9A7 /* STCPSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D77F99B1B5597510013F9A7 /* STCPSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9961B5597510013F9A7 /* STCPSocket.m */; };
 		5D77F99C1B5597510013F9A7 /* SUDPSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9971B5597510013F9A7 /* SUDPSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D77F99D1B5597510013F9A7 /* SUDPSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9981B5597510013F9A7 /* SUDPSocket.m */; };
 		5D77F99E1B5597510013F9A7 /* SuperSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9991B5597510013F9A7 /* SuperSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5D77F9A01B55976D0013F9A7 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D77F99F1B55976D0013F9A7 /* Info.plist */; };
 		5D77F9AB1B55992D0013F9A7 /* SuperSocketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9AA1B55992D0013F9A7 /* SuperSocketTests.m */; };
 		5D77F9AD1B55992D0013F9A7 /* SuperSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D48330A1A9D074D00252386 /* SuperSocket.framework */; };
 		5D77F9B61B559FF90013F9A7 /* SUDPSendPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9B41B559FF90013F9A7 /* SUDPSendPacket.h */; };
@@ -25,8 +26,6 @@
 		5D77F9C41B55A10B0013F9A7 /* STCPReadPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9C21B55A10B0013F9A7 /* STCPReadPacket.m */; };
 		5D77F9C71B55A13A0013F9A7 /* STCPWritePacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9C51B55A13A0013F9A7 /* STCPWritePacket.h */; };
 		5D77F9C81B55A13A0013F9A7 /* STCPWritePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9C61B55A13A0013F9A7 /* STCPWritePacket.m */; };
-		5D77F9CB1B55A1750013F9A7 /* STCPSpecialPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9C91B55A1750013F9A7 /* STCPSpecialPacket.h */; };
-		5D77F9CC1B55A1750013F9A7 /* STCPSpecialPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9CA1B55A1750013F9A7 /* STCPSpecialPacket.m */; };
 		5D77F9CF1B55A8B30013F9A7 /* STCPSocketDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9CE1B55A8B30013F9A7 /* STCPSocketDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D77F9D21B55AAD80013F9A7 /* SUDPSocketDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9D11B55AAD80013F9A7 /* SUDPSocketDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -42,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5D1DC7F61B754B6100236EE6 /* STCPSpecialPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STCPSpecialPacket.h; path = SuperSocket/STCPSpecialPacket.h; sourceTree = SOURCE_ROOT; };
+		5D1DC7F71B754B6100236EE6 /* STCPSpecialPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STCPSpecialPacket.m; path = SuperSocket/STCPSpecialPacket.m; sourceTree = SOURCE_ROOT; };
 		5D48330A1A9D074D00252386 /* SuperSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SuperSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D77F9951B5597510013F9A7 /* STCPSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STCPSocket.h; path = SuperSocket/STCPSocket.h; sourceTree = SOURCE_ROOT; };
 		5D77F9961B5597510013F9A7 /* STCPSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STCPSocket.m; path = SuperSocket/STCPSocket.m; sourceTree = SOURCE_ROOT; };
@@ -62,8 +63,6 @@
 		5D77F9C21B55A10B0013F9A7 /* STCPReadPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STCPReadPacket.m; path = SuperSocket/STCPReadPacket.m; sourceTree = SOURCE_ROOT; };
 		5D77F9C51B55A13A0013F9A7 /* STCPWritePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STCPWritePacket.h; path = SuperSocket/STCPWritePacket.h; sourceTree = SOURCE_ROOT; };
 		5D77F9C61B55A13A0013F9A7 /* STCPWritePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = STCPWritePacket.m; path = SuperSocket/STCPWritePacket.m; sourceTree = SOURCE_ROOT; };
-		5D77F9C91B55A1750013F9A7 /* STCPSpecialPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = STCPSpecialPacket.h; sourceTree = SOURCE_ROOT; };
-		5D77F9CA1B55A1750013F9A7 /* STCPSpecialPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = STCPSpecialPacket.m; sourceTree = SOURCE_ROOT; };
 		5D77F9CE1B55A8B30013F9A7 /* STCPSocketDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = STCPSocketDelegate.h; path = SuperSocket/STCPSocketDelegate.h; sourceTree = SOURCE_ROOT; };
 		5D77F9D11B55AAD80013F9A7 /* SUDPSocketDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUDPSocketDelegate.h; path = SuperSocket/SUDPSocketDelegate.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -165,8 +164,8 @@
 				5D77F9C21B55A10B0013F9A7 /* STCPReadPacket.m */,
 				5D77F9C51B55A13A0013F9A7 /* STCPWritePacket.h */,
 				5D77F9C61B55A13A0013F9A7 /* STCPWritePacket.m */,
-				5D77F9C91B55A1750013F9A7 /* STCPSpecialPacket.h */,
-				5D77F9CA1B55A1750013F9A7 /* STCPSpecialPacket.m */,
+				5D1DC7F61B754B6100236EE6 /* STCPSpecialPacket.h */,
+				5D1DC7F71B754B6100236EE6 /* STCPSpecialPacket.m */,
 			);
 			name = Internal;
 			sourceTree = "<group>";
@@ -195,8 +194,8 @@
 				5D77F9BA1B55A0690013F9A7 /* SUDPSpecialPacket.h in Headers */,
 				5D77F9BF1B55A0CC0013F9A7 /* STCPSocketPreBuffer.h in Headers */,
 				5D77F9C71B55A13A0013F9A7 /* STCPWritePacket.h in Headers */,
-				5D77F9CB1B55A1750013F9A7 /* STCPSpecialPacket.h in Headers */,
 				5D77F99A1B5597510013F9A7 /* STCPSocket.h in Headers */,
+				5D1DC7F81B754B6100236EE6 /* STCPSpecialPacket.h in Headers */,
 				5D77F9C31B55A10B0013F9A7 /* STCPReadPacket.h in Headers */,
 				5D77F9CF1B55A8B30013F9A7 /* STCPSocketDelegate.h in Headers */,
 				5D77F99C1B5597510013F9A7 /* SUDPSocket.h in Headers */,
@@ -282,7 +281,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D77F9A01B55976D0013F9A7 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,7 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D77F99D1B5597510013F9A7 /* SUDPSocket.m in Sources */,
-				5D77F9CC1B55A1750013F9A7 /* STCPSpecialPacket.m in Sources */,
+				5D1DC7F91B754B6100236EE6 /* STCPSpecialPacket.m in Sources */,
 				5D77F99B1B5597510013F9A7 /* STCPSocket.m in Sources */,
 				5D77F9B71B559FF90013F9A7 /* SUDPSendPacket.m in Sources */,
 				5D77F9C41B55A10B0013F9A7 /* STCPReadPacket.m in Sources */,

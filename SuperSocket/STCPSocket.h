@@ -1015,5 +1015,3 @@ typedef NS_ENUM(NSUInteger, STCPSocketError) {
 + (NSData *)ZeroData; // 0x00
 
 @end
-
-

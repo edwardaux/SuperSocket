@@ -18,7 +18,7 @@
  *  - or simply reading the first chunk of available data
  **/
 @interface STCPReadPacket : NSObject {
-@public
+  @public
     NSMutableData *buffer;
     NSUInteger startOffset;
     NSUInteger bytesDone;

@@ -39,7 +39,7 @@
 
 // Logging uses the CocoaLumberjack framework (which is also GCD based).
 // http://code.google.com/p/cocoalumberjack/
-// 
+//
 // It allows us to do a lot of logging without significantly slowing down the code.
 #import "DDLog.h"
 
@@ -98,19 +98,19 @@ static const int logLevel = LOG_LEVEL_VERBOSE;
  * Seeing a return statements within an inner block
  * can sometimes be mistaken for a return point of the enclosing method.
  * This makes inline blocks a bit easier to read.
-**/
+ **/
 #define return_from_block return
 
 /**
  * A socket file descriptor is really just an integer.
  * It represents the index of the socket within the kernel.
  * This makes invalid file descriptor comparisons easier to read.
-**/
-#define SOCKET_NULL -1
+ **/
+NSInteger const SUDPSocketNull = -1;
 
 /**
  * Just to type less code.
-**/
+ **/
 #define AutoreleasedBlock(block) ^{ \
   @autoreleasepool {                \
       block();                      \
@@ -298,16 +298,13 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
         if (dq) {
             delegateQueue = dq;
-#if !OS_OBJECT_USE_OBJC
-            dispatch_retain(delegateQueue);
-#endif
         }
 
         max4ReceiveSize = 9216;
         max6ReceiveSize = 9216;
 
-        socket4FD = SOCKET_NULL;
-        socket6FD = SOCKET_NULL;
+        socket4FD = SUDPSocketNull;
+        socket6FD = SUDPSocketNull;
 
         if (sq) {
             NSAssert(sq != dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0),
@@ -318,9 +315,6 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
                      @"The given socketQueue parameter must not be a concurrent queue.");
 
             socketQueue = sq;
-#if !OS_OBJECT_USE_OBJC
-            dispatch_retain(socketQueue);
-#endif
         } else {
             socketQueue = dispatch_queue_create([SUDPSocketQueueName UTF8String], NULL);
         }
@@ -376,16 +370,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     }
 
     delegate = nil;
-#if !OS_OBJECT_USE_OBJC
-    if (delegateQueue)
-        dispatch_release(delegateQueue);
-#endif
     delegateQueue = NULL;
-
-#if !OS_OBJECT_USE_OBJC
-    if (socketQueue)
-        dispatch_release(socketQueue);
-#endif
     socketQueue = NULL;
 
     LogInfo(@"%@ - %@ (finish)", THIS_METHOD, self);
@@ -449,24 +434,17 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 - (void)setDelegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
-
-#if !OS_OBJECT_USE_OBJC
-      if (delegateQueue)
-          dispatch_release(delegateQueue);
-      if (newDelegateQueue)
-          dispatch_retain(newDelegateQueue);
-#endif
-
       delegateQueue = newDelegateQueue;
     };
 
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
     } else {
-        if (synchronously)
+        if (synchronously) {
             dispatch_sync(socketQueue, block);
-        else
+        } else {
             dispatch_async(socketQueue, block);
+        }
     }
 }
 
@@ -502,26 +480,18 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 - (void)setDelegate:(id<SUDPSocketDelegate>)newDelegate delegateQueue:(dispatch_queue_t)newDelegateQueue synchronously:(BOOL)synchronously {
     dispatch_block_t block = ^{
-
       delegate = newDelegate;
-
-#if !OS_OBJECT_USE_OBJC
-      if (delegateQueue)
-          dispatch_release(delegateQueue);
-      if (newDelegateQueue)
-          dispatch_retain(newDelegateQueue);
-#endif
-
       delegateQueue = newDelegateQueue;
     };
 
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
     } else {
-        if (synchronously)
+        if (synchronously) {
             dispatch_sync(socketQueue, block);
-        else
+        } else {
             dispatch_async(socketQueue, block);
+        }
     }
 }
 
@@ -800,7 +770,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didConnectToAddress:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
         NSData *address = [anAddress copy]; // In case param is NSMutableData
 
         dispatch_async(delegateQueue, ^{
@@ -815,7 +785,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didNotConnect:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -829,7 +799,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didSendDataWithTag:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -843,7 +813,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocket:didNotSendDataWithTag:dueToError:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -859,7 +829,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     SEL selector = @selector(udpSocket:didReceiveData:fromAddress:withFilterContext:);
 
     if (delegateQueue && [delegate respondsToSelector:selector]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -873,7 +843,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     LogTrace();
 
     if (delegateQueue && [delegate respondsToSelector:@selector(udpSocketDidClose:withError:)]) {
-        id theDelegate = delegate;
+        id<SUDPSocketDelegate> theDelegate = delegate;
 
         dispatch_async(delegateQueue, ^{
           @autoreleasepool {
@@ -928,7 +898,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * Returns a standard send timeout error.
-**/
+ **/
 - (NSError *)sendTimeoutError {
     NSString *errMsg = NSLocalizedStringWithDefaultValue(@"SUDPSocketSendTimeoutError",
                                                          @"SUDPSocket",
@@ -963,15 +933,14 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
                            userInfo:userInfo];
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Utilities
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)preOp:(NSError **)errPtr {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
 
-    if (delegate == nil) // Must have delegate set
-    {
+    // Must have delegate set
+    if (delegate == nil) {
         if (errPtr) {
             NSString *msg = @"Attempting to use socket without a delegate. Set a delegate first.";
             *errPtr = [self badConfigError:msg];
@@ -979,8 +948,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         return NO;
     }
 
-    if (delegateQueue == NULL) // Must have delegate queue set
-    {
+    // Must have delegate queue set
+    if (delegateQueue == NULL) {
         if (errPtr) {
             NSString *msg = @"Attempting to use socket without a delegate queue. Set a delegate queue first.";
             *errPtr = [self badConfigError:msg];
@@ -994,7 +963,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method executes on a global concurrent queue.
  * When complete, it executes the given completion block on the socketQueue.
-**/
+ **/
 - (void)asyncResolveHost:(NSString *)aHost
                     port:(uint16_t)port
      withCompletionBlock:(void (^)(NSArray<NSData *> *addresses, NSError *error))completionBlock {
@@ -1097,10 +1066,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method picks an address from the given list of addresses.
  * The address picked depends upon which protocols are disabled, deactived, & preferred.
- * 
+ *
  * Returns the address family (AF_INET or AF_INET6) of the picked address,
  * or AF_UNSPEC and the corresponding error is there's a problem.
-**/
+ **/
 - (int)getAddress:(NSData **)addressPtr error:(NSError **)errorPtr fromAddresses:(NSArray<NSData *> *)addresses {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
     NSAssert([addresses count] > 0, @"Expected at least one address");
@@ -1243,7 +1212,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * Finds the address(es) of an interface description.
  * An inteface description may be an interface name (en0, en1, lo0) or corresponding IP (192.168.4.34).
-**/
+ **/
 - (void)convertIntefaceDescription:(NSString *)interfaceDescription
                               port:(uint16_t)port
                       intoAddress4:(NSData **)interfaceAddr4Ptr
@@ -1375,7 +1344,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * Converts a numeric hostname into its corresponding address.
  * The hostname is expected to be an IPv4 or IPv6 address represented as a human-readable string. (e.g. 192.168.4.34)
-**/
+ **/
 - (void)convertNumericHost:(NSString *)numericHost
                       port:(uint16_t)port
               intoAddress4:(NSData **)addr4Ptr
@@ -1584,19 +1553,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
     int theSocketFD = socket4FD;
 
-#if !OS_OBJECT_USE_OBJC
-    dispatch_source_t theSendSource = send4Source;
-    dispatch_source_t theReceiveSource = receive4Source;
-#endif
-
     dispatch_source_set_cancel_handler(send4Source, ^{
-
       LogVerbose(@"send4CancelBlock");
-
-#if !OS_OBJECT_USE_OBJC
-      LogVerbose(@"dispatch_release(send4Source)");
-      dispatch_release(theSendSource);
-#endif
 
       if (--socketFDRefCount == 0) {
           LogVerbose(@"close(socket4FD)");
@@ -1605,13 +1563,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     });
 
     dispatch_source_set_cancel_handler(receive4Source, ^{
-
       LogVerbose(@"receive4CancelBlock");
-
-#if !OS_OBJECT_USE_OBJC
-      LogVerbose(@"dispatch_release(receive4Source)");
-      dispatch_release(theReceiveSource);
-#endif
 
       if (--socketFDRefCount == 0) {
           LogVerbose(@"close(socket4FD)");
@@ -1685,19 +1637,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
     int theSocketFD = socket6FD;
 
-#if !OS_OBJECT_USE_OBJC
-    dispatch_source_t theSendSource = send6Source;
-    dispatch_source_t theReceiveSource = receive6Source;
-#endif
-
     dispatch_source_set_cancel_handler(send6Source, ^{
-
       LogVerbose(@"send6CancelBlock");
-
-#if !OS_OBJECT_USE_OBJC
-      LogVerbose(@"dispatch_release(send6Source)");
-      dispatch_release(theSendSource);
-#endif
 
       if (--socketFDRefCount == 0) {
           LogVerbose(@"close(socket6FD)");
@@ -1706,13 +1647,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     });
 
     dispatch_source_set_cancel_handler(receive6Source, ^{
-
       LogVerbose(@"receive6CancelBlock");
-
-#if !OS_OBJECT_USE_OBJC
-      LogVerbose(@"dispatch_release(receive6Source)");
-      dispatch_release(theReceiveSource);
-#endif
 
       if (--socketFDRefCount == 0) {
           LogVerbose(@"close(socket6FD)");
@@ -1745,11 +1680,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
       int socketFD = socket(domain, SOCK_DGRAM, 0);
 
-      if (socketFD == SOCKET_NULL) {
+      if (socketFD == SUDPSocketNull) {
           if (errPtr)
               *errPtr = [self errnoErrorWithReason:@"Error in socket() function"];
 
-          return SOCKET_NULL;
+          return SUDPSocketNull;
       }
 
       int status;
@@ -1762,7 +1697,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
               *errPtr = [self errnoErrorWithReason:@"Error enabling non-blocking IO on socket (fcntl)"];
 
           close(socketFD);
-          return SOCKET_NULL;
+          return SUDPSocketNull;
       }
 
       int reuseaddr = 1;
@@ -1772,7 +1707,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
               *errPtr = [self errnoErrorWithReason:@"Error enabling address reuse (setsockopt)"];
 
           close(socketFD);
-          return SOCKET_NULL;
+          return SUDPSocketNull;
       }
 
       int nosigpipe = 1;
@@ -1782,7 +1717,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
               *errPtr = [self errnoErrorWithReason:@"Error disabling sigpipe (setsockopt)"];
 
           close(socketFD);
-          return SOCKET_NULL;
+          return SUDPSocketNull;
       }
 
       return socketFD;
@@ -1794,7 +1729,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         LogVerbose(@"Creating IPv4 socket");
 
         socket4FD = createSocket(AF_INET);
-        if (socket4FD == SOCKET_NULL) {
+        if (socket4FD == SUDPSocketNull) {
             // errPtr set in local createSocket() block
             return NO;
         }
@@ -1804,12 +1739,12 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         LogVerbose(@"Creating IPv6 socket");
 
         socket6FD = createSocket(AF_INET6);
-        if (socket6FD == SOCKET_NULL) {
+        if (socket6FD == SUDPSocketNull) {
             // errPtr set in local createSocket() block
 
-            if (socket4FD != SOCKET_NULL) {
+            if (socket4FD != SUDPSocketNull) {
                 close(socket4FD);
-                socket4FD = SOCKET_NULL;
+                socket4FD = SUDPSocketNull;
             }
 
             return NO;
@@ -1909,7 +1844,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 }
 
 - (void)closeSocket4 {
-    if (socket4FD != SOCKET_NULL) {
+    if (socket4FD != SUDPSocketNull) {
         LogVerbose(@"dispatch_source_cancel(send4Source)");
         dispatch_source_cancel(send4Source);
 
@@ -1929,7 +1864,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         send4Source = NULL;
         receive4Source = NULL;
 
-        socket4FD = SOCKET_NULL;
+        socket4FD = SUDPSocketNull;
 
         // Clear socket states
 
@@ -1945,7 +1880,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 }
 
 - (void)closeSocket6 {
-    if (socket6FD != SOCKET_NULL) {
+    if (socket6FD != SUDPSocketNull) {
         LogVerbose(@"dispatch_source_cancel(send6Source)");
         dispatch_source_cancel(send6Source);
 
@@ -1965,7 +1900,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
         // The sockets will be closed by the cancel handlers of the corresponding source
 
-        socket6FD = SOCKET_NULL;
+        socket6FD = SUDPSocketNull;
 
         // Clear socket states
 
@@ -2037,7 +1972,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 - (void)maybeUpdateCachedLocalAddress4Info {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
 
-    if (cachedLocalAddress4 || ((flags & kDidBind) == 0) || (socket4FD == SOCKET_NULL)) {
+    if (cachedLocalAddress4 || ((flags & kDidBind) == 0) || (socket4FD == SUDPSocketNull)) {
         return;
     }
 
@@ -2055,7 +1990,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 - (void)maybeUpdateCachedLocalAddress6Info {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
 
-    if (cachedLocalAddress6 || ((flags & kDidBind) == 0) || (socket6FD == SOCKET_NULL)) {
+    if (cachedLocalAddress6 || ((flags & kDidBind) == 0) || (socket6FD == SUDPSocketNull)) {
         return;
     }
 
@@ -2075,7 +2010,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
     dispatch_block_t block = ^{
 
-      if (socket4FD != SOCKET_NULL) {
+      if (socket4FD != SUDPSocketNull) {
           [self maybeUpdateCachedLocalAddress4Info];
           result = cachedLocalAddress4;
       } else {
@@ -2098,7 +2033,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
     dispatch_block_t block = ^{
 
-      if (socket4FD != SOCKET_NULL) {
+      if (socket4FD != SUDPSocketNull) {
           [self maybeUpdateCachedLocalAddress4Info];
           result = cachedLocalHost4;
       } else {
@@ -2120,7 +2055,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
     dispatch_block_t block = ^{
 
-      if (socket4FD != SOCKET_NULL) {
+      if (socket4FD != SUDPSocketNull) {
           [self maybeUpdateCachedLocalAddress4Info];
           result = cachedLocalPort4;
       } else {
@@ -2251,7 +2186,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     uint16_t port = 0;
     int family = AF_UNSPEC;
 
-    if (socket4FD != SOCKET_NULL) {
+    if (socket4FD != SUDPSocketNull) {
         struct sockaddr_in sockaddr4;
         socklen_t sockaddr4len = sizeof(sockaddr4);
 
@@ -2263,7 +2198,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         } else {
             LogWarn(@"Error in getpeername: %@", [self errnoError]);
         }
-    } else if (socket6FD != SOCKET_NULL) {
+    } else if (socket6FD != SUDPSocketNull) {
         struct sockaddr_in6 sockaddr6;
         socklen_t sockaddr6len = sizeof(sockaddr6);
 
@@ -2372,7 +2307,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     dispatch_block_t block = ^{
 
       if (flags & kDidCreateSockets) {
-          result = (socket4FD != SOCKET_NULL);
+          result = (socket4FD != SUDPSocketNull);
       } else {
           result = [self isIPv4Enabled];
       }
@@ -2392,7 +2327,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     dispatch_block_t block = ^{
 
       if (flags & kDidCreateSockets) {
-          result = (socket6FD != SOCKET_NULL);
+          result = (socket6FD != SUDPSocketNull);
       } else {
           result = [self isIPv6Enabled];
       }
@@ -2413,7 +2348,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method runs through the various checks required prior to a bind attempt.
  * It is shared between the various bind methods.
-**/
+ **/
 - (BOOL)preBind:(NSError **)errPtr {
     if (![self preOp:errPtr]) {
         return NO;
@@ -2687,7 +2622,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method runs through the various checks required prior to a connect attempt.
  * It is shared between the various connect methods.
-**/
+ **/
 - (BOOL)preConnect:(NSError **)errPtr {
     if (![self preOp:errPtr]) {
         return NO;
@@ -2755,8 +2690,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           LogVerbose(@"Dispatching DNS resolve for connect...");
 
           [self asyncResolveHost:host
-                            port:port
-            withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
+                             port:port
+              withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
 
                 // The asyncResolveHost:port:: method asynchronously dispatches a task onto the global concurrent queue,
                 // and immediately returns. Once the async resolve task completes,
@@ -2828,7 +2763,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           // So we copy it to be safe.
 
           NSData *address = [remoteAddr copy];
-          NSArray<NSData *> *addresses = @[address];
+          NSArray<NSData *> *addresses = @[ address ];
 
           SUDPSpecialPacket *packet = [[SUDPSpecialPacket alloc] init];
           packet->addresses = addresses;
@@ -3042,7 +2977,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
           // Perform join
 
-          if ((socket4FD != SOCKET_NULL) && groupAddr4 && interfaceAddr4) {
+          if ((socket4FD != SUDPSocketNull) && groupAddr4 && interfaceAddr4) {
               const struct sockaddr_in *nativeGroup = (struct sockaddr_in *)[groupAddr4 bytes];
               const struct sockaddr_in *nativeIface = (struct sockaddr_in *)[interfaceAddr4 bytes];
 
@@ -3061,7 +2996,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
               [self closeSocket6];
 
               result = YES;
-          } else if ((socket6FD != SOCKET_NULL) && groupAddr6 && interfaceAddr6) {
+          } else if ((socket6FD != SUDPSocketNull) && groupAddr6 && interfaceAddr6) {
               const struct sockaddr_in6 *nativeGroup = (struct sockaddr_in6 *)[groupAddr6 bytes];
 
               struct ipv6_mreq imreq;
@@ -3099,9 +3034,64 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     return result;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Reuse Port
+
+- (BOOL)enableReusePort:(BOOL)flag error:(NSError *__autoreleasing *)errPtr {
+    __block BOOL result = NO;
+    __block NSError *err = nil;
+
+    dispatch_block_t block = ^{
+      @autoreleasepool {
+          if (![self preOp:&err]) {
+              return_from_block;
+          }
+
+          if ((flags & kDidCreateSockets) == 0) {
+              if (![self createSockets:&err]) {
+                  return_from_block;
+              }
+          }
+
+          int value = flag ? 1 : 0;
+          if (socket4FD != SUDPSocketNull) {
+              int error = setsockopt(socket4FD, SOL_SOCKET, SO_REUSEPORT, (const void *)&value, sizeof(value));
+
+              if (error) {
+                  err = [self errnoErrorWithReason:@"Error in setsockopt() function"];
+
+                  return_from_block;
+              }
+              result = YES;
+          }
+
+          if (socket6FD != SUDPSocketNull) {
+              int error = setsockopt(socket6FD, SOL_SOCKET, SO_REUSEPORT, (const void *)&value, sizeof(value));
+
+              if (error) {
+                  err = [self errnoErrorWithReason:@"Error in setsockopt() function"];
+
+                  return_from_block;
+              }
+              result = YES;
+          }
+      }
+    };
+
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
+        block();
+    } else {
+        dispatch_sync(socketQueue, block);
+    }
+
+    if (errPtr) {
+        *errPtr = err;
+    }
+
+    return result;
+}
+
+
 #pragma mark Broadcast
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)enableBroadcast:(BOOL)flag error:(NSError **)errPtr {
     __block BOOL result = NO;
@@ -3119,7 +3109,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
               }
           }
 
-          if (socket4FD != SOCKET_NULL) {
+          if (socket4FD != SUDPSocketNull) {
               int value = flag ? 1 : 0;
               int error = setsockopt(socket4FD, SOL_SOCKET, SO_BROADCAST, (const void *)&value, sizeof(value));
 
@@ -3189,8 +3179,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     packet->resolveInProgress = YES;
 
     [self asyncResolveHost:host
-                      port:port
-       withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
+                       port:port
+        withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
 
           // The asyncResolveHost:port:: method asynchronously dispatches a task onto the global concurrent queue,
           // and immediately returns. Once the async resolve task completes,
@@ -3250,18 +3240,9 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
         newFilterBlock = [filterBlock copy];
         newFilterQueue = filterQueue;
-#if !OS_OBJECT_USE_OBJC
-        dispatch_retain(newFilterQueue);
-#endif
     }
 
     dispatch_block_t block = ^{
-
-#if !OS_OBJECT_USE_OBJC
-      if (sendFilterQueue)
-          dispatch_release(sendFilterQueue);
-#endif
-
       sendFilterBlock = newFilterBlock;
       sendFilterQueue = newFilterQueue;
       sendFilterAsync = isAsynchronous;
@@ -3323,9 +3304,9 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
  * This method is called after a sendPacket has been dequeued.
  * It performs various preprocessing checks on the packet,
  * and queries the sendFilter (if set) to determine if the packet can be sent.
- * 
+ *
  * If the packet passes all checks, it will be passed on to the doSend method.
-**/
+ **/
 - (void)doPreSend {
     LogTrace();
 
@@ -3464,8 +3445,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * This method performs the actual sending of data in the currentSend packet.
- * It should only be called if the 
-**/
+ * It should only be called if the
+ **/
 - (void)doSend {
     LogTrace();
 
@@ -3562,13 +3543,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * Releases all resources associated with the currentSend.
-**/
+ **/
 - (void)endCurrentSend {
     if (sendTimer) {
         dispatch_source_cancel(sendTimer);
-#if !OS_OBJECT_USE_OBJC
-        dispatch_release(sendTimer);
-#endif
         sendTimer = NULL;
     }
 
@@ -3577,7 +3555,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * Performs the operations to timeout the current send operation, and move on.
-**/
+ **/
 - (void)doSendTimeout {
     LogTrace();
 
@@ -3589,7 +3567,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * Sets up a timer that fires to timeout the current send operation.
  * This method should only be called once per send packet.
-**/
+ **/
 - (void)setupSendTimerWithTimeout:(NSTimeInterval)timeout {
     NSAssert(sendTimer == NULL, @"Invalid logic");
     NSAssert(timeout >= 0.0, @"Invalid logic");
@@ -3739,27 +3717,19 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
         newFilterBlock = [filterBlock copy];
         newFilterQueue = filterQueue;
-#if !OS_OBJECT_USE_OBJC
-        dispatch_retain(newFilterQueue);
-#endif
     }
 
     dispatch_block_t block = ^{
-
-#if !OS_OBJECT_USE_OBJC
-      if (receiveFilterQueue)
-          dispatch_release(receiveFilterQueue);
-#endif
-
       receiveFilterBlock = newFilterBlock;
       receiveFilterQueue = newFilterQueue;
       receiveFilterAsync = isAsynchronous;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_async(socketQueue, block);
+    }
 }
 
 - (void)doReceive {
@@ -3811,7 +3781,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     if (flags & kDidConnect) {
         // Connected socket
 
-        doReceive4 = (socket4FD != SOCKET_NULL);
+        doReceive4 = (socket4FD != SUDPSocketNull);
     } else {
         // Non-Connected socket
 
@@ -3847,7 +3817,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         struct sockaddr_in sockaddr4;
         socklen_t sockaddr4len = sizeof(sockaddr4);
 
-        size_t bufSize = MIN(max4ReceiveSize, socket4FDBytesAvailable);
+        // HAX: Use maximum packet size since GCD doesn't necessarily return the whole size of a packet.
+        size_t bufSize = max4ReceiveSize;
         void *buf = malloc(bufSize);
 
         result = recvfrom(socket4FD, buf, bufSize, 0, (struct sockaddr *)&sockaddr4, &sockaddr4len);
@@ -3877,7 +3848,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         struct sockaddr_in6 sockaddr6;
         socklen_t sockaddr6len = sizeof(sockaddr6);
 
-        size_t bufSize = MIN(max6ReceiveSize, socket6FDBytesAvailable);
+        // HAX: Use maximum packet size since GCD doesn't necessarily return an accurate packet size
+        size_t bufSize = max6ReceiveSize;
         void *buf = malloc(bufSize);
 
         result = recvfrom(socket6FD, buf, bufSize, 0, (struct sockaddr *)&sockaddr6, &sockaddr6len);
@@ -4271,7 +4243,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
         return YES;
     }
 
-    if (socket4FD == SOCKET_NULL && socket6FD == SOCKET_NULL) {
+    if (socket4FD == SUDPSocketNull && socket6FD == SUDPSocketNull) {
         err = [self otherError:@"Cannot create streams without a file descriptor"];
         goto Failed;
     }
@@ -4280,7 +4252,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
 
     LogVerbose(@"Creating read and write stream(s)...");
 
-    if (socket4FD != SOCKET_NULL) {
+    if (socket4FD != SUDPSocketNull) {
         CFStreamCreatePairWithSocket(NULL, (CFSocketNativeHandle)socket4FD, &readStream4, &writeStream4);
         if (!readStream4 || !writeStream4) {
             err = [self otherError:@"Error in CFStreamCreatePairWithSocket() [IPv4]"];
@@ -4288,7 +4260,7 @@ static void CFWriteStreamCallback(CFWriteStreamRef stream, CFStreamEventType typ
         }
     }
 
-    if (socket6FD != SOCKET_NULL) {
+    if (socket6FD != SUDPSocketNull) {
         CFStreamCreatePairWithSocket(NULL, (CFSocketNativeHandle)socket6FD, &readStream6, &writeStream6);
         if (!readStream6 || !writeStream6) {
             err = [self otherError:@"Error in CFStreamCreatePairWithSocket() [IPv6]"];
@@ -4354,7 +4326,7 @@ Failed:
     //	readStreamEvents  |= (kCFStreamEventOpenCompleted | kCFStreamEventHasBytesAvailable);
     //	writeStreamEvents |= (kCFStreamEventOpenCompleted | kCFStreamEventCanAcceptBytes);
 
-    if (socket4FD != SOCKET_NULL) {
+    if (socket4FD != SUDPSocketNull) {
         if (readStream4 == NULL || writeStream4 == NULL) {
             err = [self otherError:@"Read/Write stream4 is null"];
             goto Failed;
@@ -4369,7 +4341,7 @@ Failed:
         }
     }
 
-    if (socket6FD != SOCKET_NULL) {
+    if (socket6FD != SUDPSocketNull) {
         if (readStream6 == NULL || writeStream6 == NULL) {
             err = [self otherError:@"Read/Write stream6 is null"];
             goto Failed;
@@ -4432,7 +4404,7 @@ Failed:
 
     NSError *err = nil;
 
-    if (socket4FD != SOCKET_NULL) {
+    if (socket4FD != SUDPSocketNull) {
         BOOL r1 = CFReadStreamOpen(readStream4);
         BOOL r2 = CFWriteStreamOpen(writeStream4);
 
@@ -4442,7 +4414,7 @@ Failed:
         }
     }
 
-    if (socket6FD != SOCKET_NULL) {
+    if (socket6FD != SUDPSocketNull) {
         BOOL r1 = CFReadStreamOpen(readStream6);
         BOOL r2 = CFWriteStreamOpen(writeStream6);
 
@@ -4555,10 +4527,10 @@ Failed:
         LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
                 THIS_FILE,
                 THIS_METHOD);
-        return SOCKET_NULL;
+        return SUDPSocketNull;
     }
 
-    if (socket4FD != SOCKET_NULL)
+    if (socket4FD != SUDPSocketNull)
         return socket4FD;
     else
         return socket6FD;
@@ -4569,7 +4541,7 @@ Failed:
         LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
                 THIS_FILE,
                 THIS_METHOD);
-        return SOCKET_NULL;
+        return SUDPSocketNull;
     }
 
     return socket4FD;
@@ -4580,7 +4552,7 @@ Failed:
         LogWarn(@"%@: %@ - Method only available from within the context of a performBlock: invocation",
                 THIS_FILE,
                 THIS_METHOD);
-        return SOCKET_NULL;
+        return SUDPSocketNull;
     }
 
     return socket6FD;

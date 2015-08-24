@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface SUDPSpecialPacket : NSObject {
-@public
+  @public
     //	uint8_t type;
-    
+
     BOOL resolveInProgress;
-    
+
     NSArray<NSData *> *addresses;
     NSError *error;
 }

@@ -49,7 +49,7 @@
  **/
 - (void)udpSocket:(SUDPSocket *)sock didReceiveData:(NSData *)data
       fromAddress:(NSData *)address
-withFilterContext:(id)filterContext;
+    withFilterContext:(id)filterContext;
 
 /**
  * Called when the socket is closed.
