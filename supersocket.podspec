@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = 'SuperSocket'
-  spec.version      = '8.0.3'
+  spec.version      = '8.1.0'
   spec.license      = { :type => 'Public Domain', :file => 'LICENSE' }
   spec.homepage     = 'https://github.com/livio/supersocket'
   spec.authors      = { 'Joel Fischer' => 'joel@livio.io' }
