@@ -228,6 +228,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
     STCPSocketPreBuffer *sslPreBuffer;
     size_t sslWriteCachedLength;
     OSStatus sslErrCode;
+    OSStatus lastSSLHandshakeError;
 
     void *IsOnSocketQueueOrTargetQueueKey;
 
@@ -1685,7 +1686,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
 #endif
 
     [sslPreBuffer reset];
-    sslErrCode = noErr;
+    sslErrCode = lastSSLHandshakeError = noErr;
 
     if (sslContext) {
         // Getting a linker error here about the SSLx() functions?
@@ -3134,7 +3135,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         // The readQueue is waiting for SSL/TLS handshake to complete.
 
         if (flags & kStartingWriteTLS) {
-            if ([self usingSecureTransportForTLS]) {
+            if ([self usingSecureTransportForTLS] && lastSSLHandshakeError == errSSLWouldBlock) {
                 // We are in the process of a SSL Handshake.
                 // We were waiting for incoming data which has just arrived.
 
@@ -4052,7 +4053,7 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
         // The writeQueue is waiting for SSL/TLS handshake to complete.
 
         if (flags & kStartingReadTLS) {
-            if ([self usingSecureTransportForTLS]) {
+            if ([self usingSecureTransportForTLS] && lastSSLHandshakeError == errSSLWouldBlock) {
                 // We are in the process of a SSL Handshake.
                 // We were waiting for available space in the socket's internal OS buffer to continue writing.
 
@@ -5099,7 +5100,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
         [sslPreBuffer didWrite:preBufferLength];
     }
 
-    sslErrCode = noErr;
+    sslErrCode = lastSSLHandshakeError = noErr;
 
     // Start the SSL Handshake process
 
@@ -5117,6 +5118,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
     // Otherwise, the return value indicates an error code.
 
     OSStatus status = SSLHandshake(sslContext);
+    lastSSLHandshakeError = status;
 
     if (status == noErr) {
         LogVerbose(@"SSLHandshake complete");
@@ -5223,6 +5225,7 @@ static OSStatus SSLWriteFunction(SSLConnectionRef connection, const void *data, 
     stateIndex++;
 
     if (shouldTrust) {
+        NSAssert(lastSSLHandshakeError == errSSLPeerAuthCompleted, @"ssl_shouldTrustPeer called when last error is %d and not errSSLPeerAuthCompleted", (int)lastSSLHandshakeError);
         [self ssl_continueSSLHandshake];
     } else {
         [self closeWithError:[self sslError:errSSLPeerBadCert]];
