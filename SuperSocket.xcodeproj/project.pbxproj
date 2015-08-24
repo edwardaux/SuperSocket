@@ -14,7 +14,6 @@
 		5D77F99C1B5597510013F9A7 /* SUDPSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9971B5597510013F9A7 /* SUDPSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D77F99D1B5597510013F9A7 /* SUDPSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9981B5597510013F9A7 /* SUDPSocket.m */; };
 		5D77F99E1B5597510013F9A7 /* SuperSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9991B5597510013F9A7 /* SuperSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5D77F9A01B55976D0013F9A7 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5D77F99F1B55976D0013F9A7 /* Info.plist */; };
 		5D77F9AB1B55992D0013F9A7 /* SuperSocketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9AA1B55992D0013F9A7 /* SuperSocketTests.m */; };
 		5D77F9AD1B55992D0013F9A7 /* SuperSocket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D48330A1A9D074D00252386 /* SuperSocket.framework */; };
 		5D77F9B61B559FF90013F9A7 /* SUDPSendPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9B41B559FF90013F9A7 /* SUDPSendPacket.h */; };
@@ -282,7 +281,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5D77F9A01B55976D0013F9A7 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
