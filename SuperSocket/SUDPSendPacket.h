@@ -12,17 +12,17 @@
  * The GCDAsyncUdpSendPacket encompasses the instructions for a single send/write.
  **/
 @interface SUDPSendPacket : NSObject {
-@public
+  @public
     NSData *buffer;
     NSTimeInterval timeout;
     long tag;
-    
+
     BOOL resolveInProgress;
     BOOL filterInProgress;
-    
+
     NSArray<NSData *> *resolvedAddresses;
     NSError *resolveError;
-    
+
     NSData *address;
     int addressFamily;
 }

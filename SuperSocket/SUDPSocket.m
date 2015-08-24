@@ -2755,8 +2755,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           LogVerbose(@"Dispatching DNS resolve for connect...");
 
           [self asyncResolveHost:host
-                            port:port
-            withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
+                             port:port
+              withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
 
                 // The asyncResolveHost:port:: method asynchronously dispatches a task onto the global concurrent queue,
                 // and immediately returns. Once the async resolve task completes,
@@ -2828,7 +2828,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           // So we copy it to be safe.
 
           NSData *address = [remoteAddr copy];
-          NSArray<NSData *> *addresses = @[address];
+          NSArray<NSData *> *addresses = @[ address ];
 
           SUDPSpecialPacket *packet = [[SUDPSpecialPacket alloc] init];
           packet->addresses = addresses;
@@ -3189,8 +3189,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     packet->resolveInProgress = YES;
 
     [self asyncResolveHost:host
-                      port:port
-       withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
+                       port:port
+        withCompletionBlock:^(NSArray<NSData *> *addresses, NSError *error) {
 
           // The asyncResolveHost:port:: method asynchronously dispatches a task onto the global concurrent queue,
           // and immediately returns. Once the async resolve task completes,

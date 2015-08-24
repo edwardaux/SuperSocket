@@ -102,8 +102,8 @@
  * Note that this method may be called multiple times for a single write if you return positive numbers.
  **/
 - (NSTimeInterval)socket:(STCPSocket *)sock shouldTimeoutWriteWithTag:(long)tag
-                 elapsed:(NSTimeInterval)elapsed
-               bytesDone:(NSUInteger)length;
+                      elapsed:(NSTimeInterval)elapsed
+                    bytesDone:(NSUInteger)length;
 
 /**
  * Conditionally called if the read stream closes, but the write stream may still be writeable.
@@ -163,6 +163,6 @@
  * It is safe to invoke the completionHandler block even if the socket has been closed.
  **/
 - (void)socket:(STCPSocket *)sock didReceiveTrust:(SecTrustRef)trust
-completionHandler:(void (^)(BOOL shouldTrustPeer))completionHandler;
+    completionHandler:(void (^)(BOOL shouldTrustPeer))completionHandler;
 
 @end

@@ -12,7 +12,7 @@
  * The GCDAsyncWritePacket encompasses the instructions for any given write.
  **/
 @interface STCPWritePacket : NSObject {
-@public
+  @public
     NSData *buffer;
     NSUInteger bytesDone;
     long tag;

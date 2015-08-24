@@ -15,7 +15,7 @@
         buffer = d;
         timeout = t;
         tag = i;
-        
+
         resolveInProgress = NO;
     }
     return self;

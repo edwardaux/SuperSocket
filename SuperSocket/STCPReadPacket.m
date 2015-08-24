@@ -27,7 +27,7 @@
         readLength = l;
         term = [e copy];
         tag = i;
-        
+
         if (d) {
             buffer = d;
             startOffset = s;
@@ -38,7 +38,7 @@
                 buffer = [[NSMutableData alloc] initWithLength:readLength];
             else
                 buffer = [[NSMutableData alloc] initWithLength:0];
-            
+
             startOffset = 0;
             bufferOwner = YES;
             originalBufferLength = 0;
@@ -53,12 +53,12 @@
 - (void)ensureCapacityForAdditionalDataOfLength:(NSUInteger)bytesToRead {
     NSUInteger buffSize = [buffer length];
     NSUInteger buffUsed = startOffset + bytesDone;
-    
+
     NSUInteger buffSpace = buffSize - buffUsed;
-    
+
     if (bytesToRead > buffSpace) {
         NSUInteger buffInc = bytesToRead - buffSpace;
-        
+
         [buffer increaseLengthBy:buffInc];
     }
 }
@@ -72,16 +72,16 @@
  **/
 - (NSUInteger)optimalReadLengthWithDefault:(NSUInteger)defaultValue shouldPreBuffer:(BOOL *)shouldPreBufferPtr {
     NSUInteger result;
-    
+
     if (readLength > 0) {
         // Read a specific length of data
-        
+
         result = MIN(defaultValue, (readLength - bytesDone));
-        
+
         // There is no need to prebuffer since we know exactly how much data we need to read.
         // Even if the buffer isn't currently big enough to fit this amount of data,
         // it would have to be resized eventually anyway.
-        
+
         if (shouldPreBufferPtr)
             *shouldPreBufferPtr = NO;
     } else {
@@ -92,32 +92,32 @@
         //
         // - readDataToData packet
         // - readDataWithTimeout packet
-        
+
         if (maxLength > 0)
             result = MIN(defaultValue, (maxLength - bytesDone));
         else
             result = defaultValue;
-        
+
         // Since we don't know the size of the read in advance,
         // the shouldPreBuffer decision is based upon whether the returned value would fit
         // in the current buffer without requiring a resize of the buffer.
         //
         // This is because, in all likelyhood, the amount read from the socket will be less than the default value.
         // Thus we should avoid over-allocating the read buffer when we can simply use the pre-buffer instead.
-        
+
         if (shouldPreBufferPtr) {
             NSUInteger buffSize = [buffer length];
             NSUInteger buffUsed = startOffset + bytesDone;
-            
+
             NSUInteger buffSpace = buffSize - buffUsed;
-            
+
             if (buffSpace >= result)
                 *shouldPreBufferPtr = NO;
             else
                 *shouldPreBufferPtr = YES;
         }
     }
-    
+
     return result;
 }
 
@@ -133,12 +133,12 @@
 - (NSUInteger)readLengthForNonTermWithHint:(NSUInteger)bytesAvailable {
     NSAssert(term == nil, @"This method does not apply to term reads");
     NSAssert(bytesAvailable > 0, @"Invalid parameter: bytesAvailable");
-    
+
     if (readLength > 0) {
         // Read a specific length of data
-        
+
         return MIN(bytesAvailable, (readLength - bytesDone));
-        
+
         // No need to avoid resizing the buffer.
         // If the user provided their own buffer,
         // and told us to read a certain length of data that exceeds the size of the buffer,
@@ -148,13 +148,13 @@
         // The resizing will happen elsewhere if needed.
     } else {
         // Read all available data
-        
+
         NSUInteger result = bytesAvailable;
-        
+
         if (maxLength > 0) {
             result = MIN(result, (maxLength - bytesDone));
         }
-        
+
         // No need to avoid resizing the buffer.
         // If the user provided their own buffer,
         // and told us to read all available data without giving us a maxLength,
@@ -162,7 +162,7 @@
         //
         // This method does not actually do any resizing.
         // The resizing will happen elsewhere if needed.
-        
+
         return result;
     }
 }
@@ -181,14 +181,14 @@
 - (NSUInteger)readLengthForTermWithHint:(NSUInteger)bytesAvailable shouldPreBuffer:(BOOL *)shouldPreBufferPtr {
     NSAssert(term != nil, @"This method does not apply to non-term reads");
     NSAssert(bytesAvailable > 0, @"Invalid parameter: bytesAvailable");
-    
-    
+
+
     NSUInteger result = bytesAvailable;
-    
+
     if (maxLength > 0) {
         result = MIN(result, (maxLength - bytesDone));
     }
-    
+
     // Should the data be read into the read packet's buffer, or into a pre-buffer first?
     //
     // One would imagine the preferred option is the faster one.
@@ -228,17 +228,17 @@
     //
     // If we can read all the data directly into the packet's buffer without resizing it first,
     // then we do so. Otherwise we use the prebuffer.
-    
+
     if (shouldPreBufferPtr) {
         NSUInteger buffSize = [buffer length];
         NSUInteger buffUsed = startOffset + bytesDone;
-        
+
         if ((buffSize - buffUsed) >= result)
             *shouldPreBufferPtr = NO;
         else
             *shouldPreBufferPtr = YES;
     }
-    
+
     return result;
 }
 
@@ -252,7 +252,7 @@
 - (NSUInteger)readLengthForTermWithPreBuffer:(STCPSocketPreBuffer *)preBuffer found:(BOOL *)foundPtr {
     NSAssert(term != nil, @"This method does not apply to non-term reads");
     NSAssert([preBuffer availableBytes] > 0, @"Invoked with empty pre buffer!");
-    
+
     // We know that the terminator, as a whole, doesn't exist in our own buffer.
     // But it is possible that a _portion_ of it exists in our buffer.
     // So we're going to look for the terminator starting with a portion of our own buffer.
@@ -287,73 +287,73 @@
     // ---------------------
     // |B|B|B|B|B|P|P|P|P|P|
     // ---------------^-^-^-
-    
+
     BOOL found = NO;
-    
+
     NSUInteger termLength = [term length];
     NSUInteger preBufferLength = [preBuffer availableBytes];
-    
+
     if ((bytesDone + preBufferLength) < termLength) {
         // Not enough data for a full term sequence yet
         return preBufferLength;
     }
-    
+
     NSUInteger maxPreBufferLength;
     if (maxLength > 0) {
         maxPreBufferLength = MIN(preBufferLength, (maxLength - bytesDone));
-        
+
         // Note: maxLength >= termLength
     } else {
         maxPreBufferLength = preBufferLength;
     }
-    
+
     uint8_t seq[termLength];
     const void *termBuf = [term bytes];
-    
+
     NSUInteger bufLen = MIN(bytesDone, (termLength - 1));
     uint8_t *buf = (uint8_t *)[buffer mutableBytes] + startOffset + bytesDone - bufLen;
-    
+
     NSUInteger preLen = termLength - bufLen;
     const uint8_t *pre = [preBuffer readBuffer];
-    
+
     NSUInteger loopCount = bufLen + maxPreBufferLength - termLength + 1; // Plus one. See example above.
-    
+
     NSUInteger result = maxPreBufferLength;
-    
+
     NSUInteger i;
     for (i = 0; i < loopCount; i++) {
         if (bufLen > 0) {
             // Combining bytes from buffer and preBuffer
-            
+
             memcpy(seq, buf, bufLen);
             memcpy(seq + bufLen, pre, preLen);
-            
+
             if (memcmp(seq, termBuf, termLength) == 0) {
                 result = preLen;
                 found = YES;
                 break;
             }
-            
+
             buf++;
             bufLen--;
             preLen++;
         } else {
             // Comparing directly from preBuffer
-            
+
             if (memcmp(pre, termBuf, termLength) == 0) {
                 NSUInteger preOffset = pre - [preBuffer readBuffer]; // pointer arithmetic
-                
+
                 result = preOffset + termLength;
                 found = YES;
                 break;
             }
-            
+
             pre++;
         }
     }
-    
+
     // There is no need to avoid resizing the buffer in this particular situation.
-    
+
     if (foundPtr)
         *foundPtr = found;
     return result;
@@ -374,31 +374,31 @@
  **/
 - (NSInteger)searchForTermAfterPreBuffering:(ssize_t)numBytes {
     NSAssert(term != nil, @"This method does not apply to non-term reads");
-    
+
     // The implementation of this method is very similar to the above method.
     // See the above method for a discussion of the algorithm used here.
-    
+
     uint8_t *buff = [buffer mutableBytes];
     NSUInteger buffLength = bytesDone + numBytes;
-    
+
     const void *termBuff = [term bytes];
     NSUInteger termLength = [term length];
-    
+
     // Note: We are dealing with unsigned integers,
     // so make sure the math doesn't go below zero.
-    
+
     NSUInteger i = ((buffLength - numBytes) >= termLength) ? (buffLength - numBytes - termLength + 1) : 0;
-    
+
     while (i + termLength <= buffLength) {
         uint8_t *subBuffer = buff + startOffset + i;
-        
+
         if (memcmp(subBuffer, termBuff, termLength) == 0) {
             return buffLength - (i + termLength);
         }
-        
+
         i++;
     }
-    
+
     return -1;
 }
 

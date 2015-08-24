@@ -14,7 +14,7 @@
     if ((self = [super init])) {
         preBufferSize = numBytes;
         preBuffer = malloc(preBufferSize);
-        
+
         readPointer = preBuffer;
         writePointer = preBuffer;
     }
@@ -28,19 +28,19 @@
 
 - (void)ensureCapacityForWrite:(size_t)numBytes {
     size_t availableSpace = [self availableSpace];
-    
+
     if (numBytes > availableSpace) {
         size_t additionalBytes = numBytes - availableSpace;
-        
+
         size_t newPreBufferSize = preBufferSize + additionalBytes;
         uint8_t *newPreBuffer = realloc(preBuffer, newPreBufferSize);
-        
+
         size_t readPointerOffset = readPointer - preBuffer;
         size_t writePointerOffset = writePointer - preBuffer;
-        
+
         preBuffer = newPreBuffer;
         preBufferSize = newPreBufferSize;
-        
+
         readPointer = preBuffer + readPointerOffset;
         writePointer = preBuffer + writePointerOffset;
     }
@@ -63,7 +63,7 @@
 
 - (void)didRead:(size_t)bytesRead {
     readPointer += bytesRead;
-    
+
     if (readPointer == writePointer) {
         // The prebuffer has been drained. Reset pointers.
         readPointer = preBuffer;

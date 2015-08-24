@@ -13,7 +13,7 @@
  * This class my be altered to support more than just TLS in the future.
  **/
 @interface STCPSpecialPacket : NSObject {
-@public
+  @public
     NSDictionary *tlsSettings;
 }
 - (instancetype)initWithTLSSettings:(NSDictionary *)settings;
