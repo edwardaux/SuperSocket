@@ -3847,7 +3847,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         struct sockaddr_in sockaddr4;
         socklen_t sockaddr4len = sizeof(sockaddr4);
 
-        size_t bufSize = MIN(max4ReceiveSize, socket4FDBytesAvailable);
+        // HAX: Use maximum packet size since GCD doesn't necessarily return the whole size of a packet.
+        size_t bufSize = max4ReceiveSize;
         void *buf = malloc(bufSize);
 
         result = recvfrom(socket4FD, buf, bufSize, 0, (struct sockaddr *)&sockaddr4, &sockaddr4len);
@@ -3877,7 +3878,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         struct sockaddr_in6 sockaddr6;
         socklen_t sockaddr6len = sizeof(sockaddr6);
 
-        size_t bufSize = MIN(max6ReceiveSize, socket6FDBytesAvailable);
+        // HAX: Use maximum packet size since GCD doesn't necessarily return an accurate packet size
+        size_t bufSize = max6ReceiveSize;
         void *buf = malloc(bufSize);
 
         result = recvfrom(socket6FD, buf, bufSize, 0, (struct sockaddr *)&sockaddr6, &sockaddr6len);
