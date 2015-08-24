@@ -39,7 +39,7 @@
 
 // Logging uses the CocoaLumberjack framework (which is also GCD based).
 // http://code.google.com/p/cocoalumberjack/
-// 
+//
 // It allows us to do a lot of logging without significantly slowing down the code.
 #import "DDLog.h"
 
@@ -98,19 +98,19 @@ static const int logLevel = LOG_LEVEL_VERBOSE;
  * Seeing a return statements within an inner block
  * can sometimes be mistaken for a return point of the enclosing method.
  * This makes inline blocks a bit easier to read.
-**/
+ **/
 #define return_from_block return
 
 /**
  * A socket file descriptor is really just an integer.
  * It represents the index of the socket within the kernel.
  * This makes invalid file descriptor comparisons easier to read.
-**/
+ **/
 NSInteger const SUDPSocketNull = -1;
 
 /**
  * Just to type less code.
-**/
+ **/
 #define AutoreleasedBlock(block) ^{ \
   @autoreleasepool {                \
       block();                      \
@@ -898,7 +898,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * Returns a standard send timeout error.
-**/
+ **/
 - (NSError *)sendTimeoutError {
     NSString *errMsg = NSLocalizedStringWithDefaultValue(@"SUDPSocketSendTimeoutError",
                                                          @"SUDPSocket",
@@ -963,7 +963,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method executes on a global concurrent queue.
  * When complete, it executes the given completion block on the socketQueue.
-**/
+ **/
 - (void)asyncResolveHost:(NSString *)aHost
                     port:(uint16_t)port
      withCompletionBlock:(void (^)(NSArray<NSData *> *addresses, NSError *error))completionBlock {
@@ -1066,10 +1066,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method picks an address from the given list of addresses.
  * The address picked depends upon which protocols are disabled, deactived, & preferred.
- * 
+ *
  * Returns the address family (AF_INET or AF_INET6) of the picked address,
  * or AF_UNSPEC and the corresponding error is there's a problem.
-**/
+ **/
 - (int)getAddress:(NSData **)addressPtr error:(NSError **)errorPtr fromAddresses:(NSArray<NSData *> *)addresses {
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
     NSAssert([addresses count] > 0, @"Expected at least one address");
@@ -1212,7 +1212,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * Finds the address(es) of an interface description.
  * An inteface description may be an interface name (en0, en1, lo0) or corresponding IP (192.168.4.34).
-**/
+ **/
 - (void)convertIntefaceDescription:(NSString *)interfaceDescription
                               port:(uint16_t)port
                       intoAddress4:(NSData **)interfaceAddr4Ptr
@@ -1344,7 +1344,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * Converts a numeric hostname into its corresponding address.
  * The hostname is expected to be an IPv4 or IPv6 address represented as a human-readable string. (e.g. 192.168.4.34)
-**/
+ **/
 - (void)convertNumericHost:(NSString *)numericHost
                       port:(uint16_t)port
               intoAddress4:(NSData **)addr4Ptr
@@ -1555,7 +1555,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
     dispatch_source_set_cancel_handler(send4Source, ^{
       LogVerbose(@"send4CancelBlock");
-        
+
       if (--socketFDRefCount == 0) {
           LogVerbose(@"close(socket4FD)");
           close(theSocketFD);
@@ -1636,7 +1636,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     __block int socketFDRefCount = 2;
 
     int theSocketFD = socket6FD;
-    
+
     dispatch_source_set_cancel_handler(send6Source, ^{
       LogVerbose(@"send6CancelBlock");
 
@@ -2348,7 +2348,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method runs through the various checks required prior to a bind attempt.
  * It is shared between the various bind methods.
-**/
+ **/
 - (BOOL)preBind:(NSError **)errPtr {
     if (![self preOp:errPtr]) {
         return NO;
@@ -2622,7 +2622,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * This method runs through the various checks required prior to a connect attempt.
  * It is shared between the various connect methods.
-**/
+ **/
 - (BOOL)preConnect:(NSError **)errPtr {
     if (![self preOp:errPtr]) {
         return NO;
@@ -3039,52 +3039,54 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 - (BOOL)enableReusePort:(BOOL)flag error:(NSError *__autoreleasing *)errPtr {
     __block BOOL result = NO;
     __block NSError *err = nil;
-    
-    dispatch_block_t block = ^{ @autoreleasepool {
-        if (![self preOp:&err]) {
-            return_from_block;
-        }
-        
-        if ((flags & kDidCreateSockets) == 0) {
-            if (![self createSockets:&err]) {
-                return_from_block;
-            }
-        }
-        
-        int value = flag ? 1 : 0;
-        if (socket4FD != SUDPSocketNull) {
-            int error = setsockopt(socket4FD, SOL_SOCKET, SO_REUSEPORT, (const void *)&value, sizeof(value));
-            
-            if (error) {
-                err = [self errnoErrorWithReason:@"Error in setsockopt() function"];
-                
-                return_from_block;
-            }
-            result = YES;
-        }
-        
-        if (socket6FD != SUDPSocketNull) {
-            int error = setsockopt(socket6FD, SOL_SOCKET, SO_REUSEPORT, (const void *)&value, sizeof(value));
-            
-            if (error) {
-                err = [self errnoErrorWithReason:@"Error in setsockopt() function"];
-                
-                return_from_block;
-            }
-            result = YES;
-        }
-    }};
-    
+
+    dispatch_block_t block = ^{
+      @autoreleasepool {
+          if (![self preOp:&err]) {
+              return_from_block;
+          }
+
+          if ((flags & kDidCreateSockets) == 0) {
+              if (![self createSockets:&err]) {
+                  return_from_block;
+              }
+          }
+
+          int value = flag ? 1 : 0;
+          if (socket4FD != SUDPSocketNull) {
+              int error = setsockopt(socket4FD, SOL_SOCKET, SO_REUSEPORT, (const void *)&value, sizeof(value));
+
+              if (error) {
+                  err = [self errnoErrorWithReason:@"Error in setsockopt() function"];
+
+                  return_from_block;
+              }
+              result = YES;
+          }
+
+          if (socket6FD != SUDPSocketNull) {
+              int error = setsockopt(socket6FD, SOL_SOCKET, SO_REUSEPORT, (const void *)&value, sizeof(value));
+
+              if (error) {
+                  err = [self errnoErrorWithReason:@"Error in setsockopt() function"];
+
+                  return_from_block;
+              }
+              result = YES;
+          }
+      }
+    };
+
     if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
     } else {
         dispatch_sync(socketQueue, block);
     }
-    
+
     if (errPtr) {
         *errPtr = err;
     }
-    
+
     return result;
 }
 
@@ -3302,9 +3304,9 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
  * This method is called after a sendPacket has been dequeued.
  * It performs various preprocessing checks on the packet,
  * and queries the sendFilter (if set) to determine if the packet can be sent.
- * 
+ *
  * If the packet passes all checks, it will be passed on to the doSend method.
-**/
+ **/
 - (void)doPreSend {
     LogTrace();
 
@@ -3443,8 +3445,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * This method performs the actual sending of data in the currentSend packet.
- * It should only be called if the 
-**/
+ * It should only be called if the
+ **/
 - (void)doSend {
     LogTrace();
 
@@ -3541,7 +3543,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * Releases all resources associated with the currentSend.
-**/
+ **/
 - (void)endCurrentSend {
     if (sendTimer) {
         dispatch_source_cancel(sendTimer);
@@ -3553,7 +3555,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
 /**
  * Performs the operations to timeout the current send operation, and move on.
-**/
+ **/
 - (void)doSendTimeout {
     LogTrace();
 
@@ -3565,7 +3567,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 /**
  * Sets up a timer that fires to timeout the current send operation.
  * This method should only be called once per send packet.
-**/
+ **/
 - (void)setupSendTimerWithTimeout:(NSTimeInterval)timeout {
     NSAssert(sendTimer == NULL, @"Invalid logic");
     NSAssert(timeout >= 0.0, @"Invalid logic");
