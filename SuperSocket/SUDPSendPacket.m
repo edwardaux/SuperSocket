@@ -8,16 +8,26 @@
 
 #import "SUDPSendPacket.h"
 
+@interface SUDPSendPacket ()
+
+@property (strong, nonatomic, readwrite) NSData *buffer;
+@property (assign, nonatomic, readwrite) NSTimeInterval timeout;
+@property (assign, nonatomic, readwrite) long tag;
+
+@end
+
+
 @implementation SUDPSendPacket
 
-- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i {
+- (instancetype)initWithData:(NSData *)data timeout:(NSTimeInterval)timeout tag:(long)tag {
     if ((self = [super init])) {
-        buffer = d;
-        timeout = t;
-        tag = i;
+        _buffer = data;
+        _timeout = timeout;
+        _tag = tag;
 
-        resolveInProgress = NO;
+        _resolveInProgress = NO;
     }
+
     return self;
 }
 

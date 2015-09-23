@@ -2694,9 +2694,6 @@ static dispatch_queue_t cfstreamThreadSetupQueue; // setup & teardown
           }
       }
     });
-
-    // Do not rely on the block being run in order to release the packet,
-    // as the queue might get released without the block completing.
 }
 
 - (void)readDataToLength:(NSUInteger)length withTimeout:(NSTimeInterval)timeout tag:(long)tag {

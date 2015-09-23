@@ -11,22 +11,19 @@
 /**
  * The GCDAsyncUdpSendPacket encompasses the instructions for a single send/write.
  **/
-@interface SUDPSendPacket : NSObject {
-  @public
-    NSData *buffer;
-    NSTimeInterval timeout;
-    long tag;
+@interface SUDPSendPacket : NSObject
 
-    BOOL resolveInProgress;
-    BOOL filterInProgress;
+@property (strong, nonatomic, readonly) NSData *buffer;
+@property (assign, nonatomic, readonly) NSTimeInterval timeout;
+@property (assign, nonatomic, readonly) long tag;
 
-    NSArray<NSData *> *resolvedAddresses;
-    NSError *resolveError;
+@property (assign, nonatomic) BOOL resolveInProgress;
+@property (assign, nonatomic) BOOL filterInProgress;
+@property (strong, nonatomic) NSArray<NSData *> *resolvedAddresses;
+@property (strong, nonatomic) NSError *resolveError;
+@property (strong, nonatomic) NSData *address;
+@property (assign, nonatomic) int addressFamily;
 
-    NSData *address;
-    int addressFamily;
-}
-
-- (instancetype)initWithData:(NSData *)d timeout:(NSTimeInterval)t tag:(long)i;
+- (instancetype)initWithData:(NSData *)data timeout:(NSTimeInterval)timeout tag:(long)tag;
 
 @end
