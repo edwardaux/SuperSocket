@@ -205,9 +205,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		5D4833091A9D074D00252386 /* SuperSocket */ = {
+		5D4833091A9D074D00252386 /* SuperSocket iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocket" */;
+			buildConfigurationList = 5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocket iOS" */;
 			buildPhases = (
 				5D4833051A9D074D00252386 /* Sources */,
 				5D4833061A9D074D00252386 /* Frameworks */,
@@ -218,7 +218,7 @@
 			);
 			dependencies = (
 			);
-			name = SuperSocket;
+			name = "SuperSocket iOS";
 			productName = CocoaAsyncSocket;
 			productReference = 5D48330A1A9D074D00252386 /* SuperSocket.framework */;
 			productType = "com.apple.product-type.framework";
@@ -270,7 +270,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5D4833091A9D074D00252386 /* SuperSocket */,
+				5D4833091A9D074D00252386 /* SuperSocket iOS */,
 				5D77F9A71B55992D0013F9A7 /* SuperSocketTests */,
 			);
 		};
@@ -322,7 +322,7 @@
 /* Begin PBXTargetDependency section */
 		5D77F9AF1B55992D0013F9A7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5D4833091A9D074D00252386 /* SuperSocket */;
+			target = 5D4833091A9D074D00252386 /* SuperSocket iOS */;
 			targetProxy = 5D77F9AE1B55992D0013F9A7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -490,7 +490,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocket" */ = {
+		5D4833201A9D074D00252386 /* Build configuration list for PBXNativeTarget "SuperSocket iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D4833211A9D074D00252386 /* Debug */,
