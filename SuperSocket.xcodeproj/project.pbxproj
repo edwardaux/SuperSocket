@@ -28,6 +28,7 @@
 		5D77F9C81B55A13A0013F9A7 /* STCPWritePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9C61B55A13A0013F9A7 /* STCPWritePacket.m */; };
 		5D77F9CF1B55A8B30013F9A7 /* STCPSocketDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9CE1B55A8B30013F9A7 /* STCPSocketDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D77F9D21B55AAD80013F9A7 /* SUDPSocketDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9D11B55AAD80013F9A7 /* SUDPSocketDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BFD94EF11BFFD93E004F0576 /* SuperSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D77F9991B5597510013F9A7 /* SuperSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BFFBFEAE1BD990D80004CC87 /* STCPSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9961B5597510013F9A7 /* STCPSocket.m */; };
 		BFFBFEAF1BD990D80004CC87 /* STCPSocketPreBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9BE1B55A0CC0013F9A7 /* STCPSocketPreBuffer.m */; };
 		BFFBFEB01BD990D80004CC87 /* STCPReadPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D77F9C21B55A10B0013F9A7 /* STCPReadPacket.m */; };
@@ -227,6 +228,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFD94EF11BFFD93E004F0576 /* SuperSocket.h in Headers */,
 				BFFBFEB61BD991800004CC87 /* STCPSocketDelegate.h in Headers */,
 				BFFBFEB81BD991800004CC87 /* SUDPSocketDelegate.h in Headers */,
 				BFFBFEB91BD991800004CC87 /* SUDPSocket.h in Headers */,
