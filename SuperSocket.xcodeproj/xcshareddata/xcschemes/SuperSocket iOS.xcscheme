@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5D4833091A9D074D00252386"
                BuildableName = "SuperSocket.framework"
-               BlueprintName = "SuperSocket"
+               BlueprintName = "SuperSocket iOS"
                ReferencedContainer = "container:SuperSocket.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,10 +47,17 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5D4833091A9D074D00252386"
             BuildableName = "SuperSocket.framework"
-            BlueprintName = "SuperSocket"
+            BlueprintName = "SuperSocket iOS"
             ReferencedContainer = "container:SuperSocket.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = ""
+            value = ""
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -65,7 +72,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5D4833091A9D074D00252386"
             BuildableName = "SuperSocket.framework"
-            BlueprintName = "SuperSocket"
+            BlueprintName = "SuperSocket iOS"
             ReferencedContainer = "container:SuperSocket.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

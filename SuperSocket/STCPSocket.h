@@ -89,11 +89,7 @@ typedef NS_ENUM(NSUInteger, STCPSocketError) {
 #pragma mark Configuration
 
 @property (atomic, weak, readwrite) id<STCPSocketDelegate> delegate;
-#if OS_OBJECT_USE_OBJC
 @property (atomic, strong, readwrite) dispatch_queue_t delegateQueue;
-#else
-@property (atomic, assign, readwrite) dispatch_queue_t delegateQueue;
-#endif
 
 - (void)getDelegate:(id<STCPSocketDelegate> *)delegatePtr delegateQueue:(dispatch_queue_t *)delegateQueuePtr;
 - (void)setDelegate:(id<STCPSocketDelegate>)delegate delegateQueue:(dispatch_queue_t)delegateQueue;

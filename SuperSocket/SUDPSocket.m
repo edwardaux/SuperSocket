@@ -1521,10 +1521,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           if (currentSend == nil) {
               LogVerbose(@"Nothing to send");
               [self suspendSend4Source];
-          } else if (currentSend->resolveInProgress) {
+          } else if (currentSend.resolveInProgress) {
               LogVerbose(@"currentSend - waiting for address resolve");
               [self suspendSend4Source];
-          } else if (currentSend->filterInProgress) {
+          } else if (currentSend.filterInProgress) {
               LogVerbose(@"currentSend - waiting on sendFilter");
               [self suspendSend4Source];
           } else {
@@ -1605,10 +1605,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           if (currentSend == nil) {
               LogVerbose(@"Nothing to send");
               [self suspendSend6Source];
-          } else if (currentSend->resolveInProgress) {
+          } else if (currentSend.resolveInProgress) {
               LogVerbose(@"currentSend - waiting for address resolve");
               [self suspendSend6Source];
-          } else if (currentSend->filterInProgress) {
+          } else if (currentSend.filterInProgress) {
               LogVerbose(@"currentSend - waiting on sendFilter");
               [self suspendSend6Source];
           } else {
@@ -1922,9 +1922,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     flags &= ~kDidCreateSockets;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Diagnostics
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)getLocalAddress:(NSData **)dataPtr
                    host:(NSString **)hostPtr
@@ -1959,12 +1958,15 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         }
     }
 
-    if (dataPtr)
+    if (dataPtr) {
         *dataPtr = data;
-    if (hostPtr)
+    }
+    if (hostPtr) {
         *hostPtr = host;
-    if (portPtr)
+    }
+    if (portPtr) {
         *portPtr = port;
+    }
 
     return (data != nil);
 }
@@ -2020,10 +2022,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2042,10 +2045,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2064,10 +2068,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2081,10 +2086,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedLocalAddress4;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2098,10 +2104,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedLocalHost4;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2115,10 +2122,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedLocalPort4;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2132,10 +2140,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedLocalAddress6;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2149,10 +2158,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedLocalHost6;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2165,11 +2175,12 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       [self maybeUpdateCachedLocalAddress6Info];
       result = cachedLocalPort6;
     };
-
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2228,10 +2239,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedConnectedAddress;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2245,10 +2257,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedConnectedHost;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2262,10 +2275,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = cachedConnectedPort;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, AutoreleasedBlock(block));
+    }
 
     return result;
 }
@@ -2293,10 +2307,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       result = (flags & kDidCreateSockets) ? NO : YES;
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
     return result;
 }
@@ -2313,10 +2328,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
     return result;
 }
@@ -2333,17 +2349,17 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
     return result;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Binding
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * This method runs through the various checks required prior to a bind attempt.
@@ -2393,8 +2409,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     __block BOOL result = NO;
     __block NSError *err = nil;
 
-    dispatch_block_t block = ^{
-      @autoreleasepool {
+    dispatch_block_t block = ^{ @autoreleasepool {
           // Run through sanity checks
 
           if (![self preBind:&err]) {
@@ -2483,19 +2498,21 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
               flags |= kIPv6Deactivated;
 
           result = YES;
-      }
-    };
+    }};
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
-    if (err)
+    if (err) {
         LogError(@"Error binding to port/interface: %@", err);
+    }
 
-    if (errPtr)
+    if (errPtr) {
         *errPtr = err;
+    }
 
     return result;
 }
@@ -2589,35 +2606,38 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           }
 
           // Update flags
-
           flags |= kDidBind;
 
-          if (!useIPv4)
+          if (!useIPv4) {
               flags |= kIPv4Deactivated;
-          if (!useIPv6)
+          }
+          if (!useIPv6) {
               flags |= kIPv6Deactivated;
+          }
 
           result = YES;
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
-    if (err)
+    if (err) {
         LogError(@"Error binding to address: %@", err);
+    }
 
-    if (errPtr)
+    if (errPtr) {
         *errPtr = err;
+    }
 
     return result;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Connecting
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * This method runs through the various checks required prior to a connect attempt.
@@ -2639,8 +2659,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     BOOL isIPv4Disabled = (config & kIPv4Disabled) ? YES : NO;
     BOOL isIPv6Disabled = (config & kIPv6Disabled) ? YES : NO;
 
-    if (isIPv4Disabled && isIPv6Disabled) // Must have IPv4 or IPv6 enabled
-    {
+    if (isIPv4Disabled && isIPv6Disabled) { // Must have IPv4 or IPv6 enabled
         if (errPtr) {
             NSString *msg = @"Both IPv4 and IPv6 have been disabled. Must enable at least one protocol first.";
             *errPtr = [self badConfigError:msg];
@@ -2658,13 +2677,11 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     dispatch_block_t block = ^{
       @autoreleasepool {
           // Run through sanity checks.
-
           if (![self preConnect:&err]) {
               return_from_block;
           }
 
           // Check parameter(s)
-
           if (host == nil) {
               NSString *msg = @"The host param is nil. Should be domain name or IP address string.";
               err = [self badParamError:msg];
@@ -2673,7 +2690,6 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           }
 
           // Create the socket(s) if needed
-
           if ((flags & kDidCreateSockets) == 0) {
               if (![self createSockets:&err]) {
                   return_from_block;
@@ -2681,12 +2697,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           }
 
           // Create special connect packet
-
           SUDPSpecialPacket *packet = [[SUDPSpecialPacket alloc] init];
           packet->resolveInProgress = YES;
 
           // Start asynchronous DNS resolve for host:port on background queue
-
           LogVerbose(@"Dispatching DNS resolve for connect...");
 
           [self asyncResolveHost:host
@@ -2716,16 +2730,19 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
-    if (err)
+    if (err) {
         LogError(@"Error connecting to host/port: %@", err);
+    }
 
-    if (errPtr)
+    if (errPtr) {
         *errPtr = err;
+    }
 
     return result;
 }
@@ -2779,16 +2796,19 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
       }
     };
 
-    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey))
+    if (dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey)) {
         block();
-    else
+    } else {
         dispatch_sync(socketQueue, block);
+    }
 
-    if (err)
+    if (err) {
         LogError(@"Error connecting to address: %@", err);
+    }
 
-    if (errPtr)
+    if (errPtr) {
         *errPtr = err;
+    }
 
     return result;
 }
@@ -2796,7 +2816,6 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 - (void)maybeConnect {
     LogTrace();
     NSAssert(dispatch_get_specific(IsOnSocketQueueOrTargetQueueKey), @"Must be dispatched on socketQueue");
-
 
     BOOL sendQueueReady = [currentSend isKindOfClass:[SUDPSpecialPacket class]];
 
@@ -2815,16 +2834,15 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
                 int addressFamily = [self getAddress:&address error:&error fromAddresses:connectPacket->addresses];
 
                 // Perform connect
-
                 BOOL result = NO;
 
                 switch (addressFamily) {
-                    case AF_INET:
+                    case AF_INET: {
                         result = [self connectWithAddress4:address error:&error];
-                        break;
-                    case AF_INET6:
+                    } break;
+                    case AF_INET6: {
                         result = [self connectWithAddress6:address error:&error];
-                        break;
+                    } break;
                 }
 
                 if (result) {
@@ -2886,9 +2904,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     return YES;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Multicast
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)preJoin:(NSError **)errPtr {
     if (![self preOp:errPtr]) {
@@ -3137,9 +3154,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     return result;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Sending
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)sendData:(NSData *)data withTag:(long)tag {
     [self sendData:data withTimeout:-1.0 tag:tag];
@@ -3176,7 +3192,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     }
 
     SUDPSendPacket *packet = [[SUDPSendPacket alloc] initWithData:data timeout:timeout tag:tag];
-    packet->resolveInProgress = YES;
+    packet.resolveInProgress = YES;
 
     [self asyncResolveHost:host
                        port:port
@@ -3185,11 +3201,9 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
           // The asyncResolveHost:port:: method asynchronously dispatches a task onto the global concurrent queue,
           // and immediately returns. Once the async resolve task completes,
           // this block is executed on our socketQueue.
-
-          packet->resolveInProgress = NO;
-
-          packet->resolvedAddresses = addresses;
-          packet->resolveError = error;
+          packet.resolveInProgress = NO;
+          packet.resolvedAddresses = addresses;
+          packet.resolveError = error;
 
           if (packet == currentSend) {
               LogVerbose(@"currentSend - address resolved");
@@ -3214,8 +3228,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     }
 
     SUDPSendPacket *packet = [[SUDPSendPacket alloc] initWithData:data timeout:timeout tag:tag];
-    packet->addressFamily = [SUDPSocket familyFromAddress:remoteAddr];
-    packet->address = remoteAddr;
+    packet.addressFamily = [SUDPSocket familyFromAddress:remoteAddr];
+    packet.address = remoteAddr;
 
     dispatch_async(socketQueue, ^{
       @autoreleasepool {
@@ -3278,9 +3292,9 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
                 [self maybeConnect];
 
                 return; // The maybeConnect method, if it connects, will invoke this method again
-            } else if (currentSend->resolveError) {
+            } else if (currentSend.resolveError) {
                 // Notify delegate
-                [self notifyDidNotSendDataWithTag:currentSend->tag dueToError:currentSend->resolveError];
+                [self notifyDidNotSendDataWithTag:currentSend.tag dueToError:currentSend.resolveError];
 
                 // Clear currentSend
                 currentSend = nil;
@@ -3320,23 +3334,23 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     if (flags & kDidConnect) {
         // Connected socket
 
-        if (currentSend->resolveInProgress || currentSend->resolvedAddresses || currentSend->resolveError) {
+        if (currentSend.resolveInProgress || currentSend.resolvedAddresses || currentSend.resolveError) {
             NSString *msg = @"Cannot specify destination of packet for connected socket";
             error = [self badConfigError:msg];
         } else {
-            currentSend->address = cachedConnectedAddress;
-            currentSend->addressFamily = cachedConnectedFamily;
+            currentSend.address = cachedConnectedAddress;
+            currentSend.addressFamily = cachedConnectedFamily;
         }
     } else {
         // Non-Connected socket
 
-        if (currentSend->resolveInProgress) {
+        if (currentSend.resolveInProgress) {
             // We're waiting for the packet's destination to be resolved.
             waitingForResolve = YES;
-        } else if (currentSend->resolveError) {
-            error = currentSend->resolveError;
-        } else if (currentSend->address == nil) {
-            if (currentSend->resolvedAddresses == nil) {
+        } else if (currentSend.resolveError) {
+            error = currentSend.resolveError;
+        } else if (currentSend.address == nil) {
+            if (currentSend.resolvedAddresses == nil) {
                 NSString *msg = @"You must specify destination of packet for a non-connected socket";
                 error = [self badConfigError:msg];
             } else {
@@ -3345,10 +3359,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
                 NSData *address = nil;
                 int addressFamily = AF_UNSPEC;
 
-                addressFamily = [self getAddress:&address error:&error fromAddresses:currentSend->resolvedAddresses];
+                addressFamily = [self getAddress:&address error:&error fromAddresses:currentSend.resolvedAddresses];
 
-                currentSend->address = address;
-                currentSend->addressFamily = addressFamily;
+                currentSend.address = address;
+                currentSend.addressFamily = addressFamily;
             }
         }
     }
@@ -3372,7 +3386,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         // Unable to send packet due to some error.
         // Notify delegate and move on.
 
-        [self notifyDidNotSendDataWithTag:currentSend->tag dueToError:error];
+        [self notifyDidNotSendDataWithTag:currentSend.tag dueToError:error];
         [self endCurrentSend];
         [self maybeDequeueSend];
 
@@ -3389,23 +3403,23 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
         if (sendFilterAsync) {
             // Scenario 1 of 3 - Need to asynchronously query sendFilter
 
-            currentSend->filterInProgress = YES;
+            currentSend.filterInProgress = YES;
             SUDPSendPacket *sendPacket = currentSend;
 
             dispatch_async(sendFilterQueue, ^{
               @autoreleasepool {
-                  BOOL allowed = sendFilterBlock(sendPacket->buffer, sendPacket->address, sendPacket->tag);
+                  BOOL allowed = sendFilterBlock(sendPacket.buffer, sendPacket.address, sendPacket.tag);
 
                   dispatch_async(socketQueue, ^{
                     @autoreleasepool {
-                        sendPacket->filterInProgress = NO;
+                        sendPacket.filterInProgress = NO;
                         if (sendPacket == currentSend) {
                             if (allowed) {
                                 [self doSend];
                             } else {
                                 LogVerbose(@"currentSend - silently dropped by sendFilter");
 
-                                [self notifyDidSendDataWithTag:currentSend->tag];
+                                [self notifyDidSendDataWithTag:currentSend.tag];
                                 [self endCurrentSend];
                                 [self maybeDequeueSend];
                             }
@@ -3421,7 +3435,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 
             dispatch_sync(sendFilterQueue, ^{
               @autoreleasepool {
-                  allowed = sendFilterBlock(currentSend->buffer, currentSend->address, currentSend->tag);
+                  allowed = sendFilterBlock(currentSend.buffer, currentSend.address, currentSend.tag);
               }
             });
 
@@ -3430,7 +3444,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
             } else {
                 LogVerbose(@"currentSend - silently dropped by sendFilter");
 
-                [self notifyDidSendDataWithTag:currentSend->tag];
+                [self notifyDidSendDataWithTag:currentSend.tag];
                 [self endCurrentSend];
                 [self maybeDequeueSend];
             }
@@ -3459,10 +3473,10 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     if (flags & kDidConnect) {
         // Connected socket
 
-        const void *buffer = [currentSend->buffer bytes];
-        size_t length = (size_t)[currentSend->buffer length];
+        const void *buffer = [currentSend.buffer bytes];
+        size_t length = (size_t)[currentSend.buffer length];
 
-        if (currentSend->addressFamily == AF_INET) {
+        if (currentSend.addressFamily == AF_INET) {
             result = send(socket4FD, buffer, length, 0);
             LogVerbose(@"send(socket4FD) = %d", result);
         } else {
@@ -3472,13 +3486,13 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     } else {
         // Non-Connected socket
 
-        const void *buffer = [currentSend->buffer bytes];
-        size_t length = (size_t)[currentSend->buffer length];
+        const void *buffer = [currentSend.buffer bytes];
+        size_t length = (size_t)[currentSend.buffer length];
 
-        const void *dst = [currentSend->address bytes];
-        socklen_t dstSize = (socklen_t)[currentSend->address length];
+        const void *dst = [currentSend.address bytes];
+        socklen_t dstSize = (socklen_t)[currentSend.address length];
 
-        if (currentSend->addressFamily == AF_INET) {
+        if (currentSend.addressFamily == AF_INET) {
             result = sendto(socket4FD, buffer, length, 0, dst, dstSize);
             LogVerbose(@"sendto(socket4FD) = %d", result);
         } else {
@@ -3525,17 +3539,17 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
             [self resumeSend6Source];
         }
 
-        if ((sendTimer == NULL) && (currentSend->timeout >= 0.0)) {
+        if ((sendTimer == NULL) && (currentSend.timeout >= 0.0)) {
             // Unable to send packet right away.
             // Start timer to timeout the send operation.
 
-            [self setupSendTimerWithTimeout:currentSend->timeout];
+            [self setupSendTimerWithTimeout:currentSend.timeout];
         }
     } else if (socketError) {
         [self closeWithError:socketError];
     } else // done
     {
-        [self notifyDidSendDataWithTag:currentSend->tag];
+        [self notifyDidSendDataWithTag:currentSend.tag];
         [self endCurrentSend];
         [self maybeDequeueSend];
     }
@@ -3559,7 +3573,7 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
 - (void)doSendTimeout {
     LogTrace();
 
-    [self notifyDidNotSendDataWithTag:currentSend->tag dueToError:[self sendTimeoutError]];
+    [self notifyDidNotSendDataWithTag:currentSend.tag dueToError:[self sendTimeoutError]];
     [self endCurrentSend];
     [self maybeDequeueSend];
 }
@@ -3588,9 +3602,8 @@ typedef NS_OPTIONS(NSUInteger, SUDPSocketConfig) {
     dispatch_resume(sendTimer);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #pragma mark Receiving
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)receiveOnce:(NSError **)errPtr {
     LogTrace();
